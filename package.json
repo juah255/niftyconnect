@@ -1,0 +1,30 @@
+{
+	"name": "niftyconnect",
+	"version": "1.0.0",
+	"description": "React admin app build tooling for the niftyConnect plugin.",
+	"private": true,
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"lint:js": "wp-scripts lint-js src",
+		"typecheck": "tsc --noEmit",
+		"format": "wp-scripts format src",
+		"i18n": "wp i18n make-pot . languages/niftyconnect.pot --slug=niftyconnect --domain=niftyconnect --exclude=node_modules,build,dist,vendor,.git",
+		"zip": "node scripts/package-plugin.mjs",
+		"production": "npm run typecheck && npm run build && npm run i18n && npm run zip"
+	},
+	"devDependencies": {
+		"@tailwindcss/postcss": "^4.3.0",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"@wordpress/scripts": "^30.9.0",
+		"autoprefixer": "^10.5.0",
+		"eslint-plugin-jsx-a11y": "^6.10.2",
+		"postcss": "^8.5.15",
+		"tailwindcss": "^4.3.0",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"lucide-react": "^1.16.0"
+	}
+}

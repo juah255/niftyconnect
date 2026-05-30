@@ -1,0 +1,3 @@
+@import "../../assets/css/admin.css";
+@import "tailwindcss";
+@source "./**/*.{ts,tsx}";
