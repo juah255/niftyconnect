@@ -86,6 +86,12 @@ final class Feature_Registry {
 				'category'    => 'wordpress',
 				'description' => __( 'Triggered when a new WordPress user account is created.', 'niftyconnect' ),
 			),
+			'admin_login'        => array(
+				'key'         => 'admin_login',
+				'label'       => __( 'Admin login', 'niftyconnect' ),
+				'category'    => 'security',
+				'description' => __( 'Triggered when a user with administrator access logs in.', 'niftyconnect' ),
+			),
 			'wc_new_order'       => array(
 				'key'         => 'wc_new_order',
 				'label'       => __( 'New WooCommerce order', 'niftyconnect' ),

@@ -142,6 +142,10 @@ final class Settings {
 				'subject' => __( 'New user registered: {{user_login}}', 'niftyconnect' ),
 				'body'    => __( "A new user registered on {{site_name}}.\n\nUsername: {{user_login}}\nEmail: {{user_email}}\nRole: {{user_role}}", 'niftyconnect' ),
 			),
+			'admin_login'        => array(
+				'subject' => __( 'Admin login on {{site_name}}: {{user_login}}', 'niftyconnect' ),
+				'body'    => __( "An administrator logged in on {{site_name}}.\n\nUsername: {{user_login}}\nName: {{user_display_name}}\nEmail: {{user_email}}\nRole: {{user_role}}\nTime: {{login_time}}\nIP address: {{login_ip}}\nUser agent: {{login_user_agent}}\nProfile: {{user_url}}", 'niftyconnect' ),
+			),
 			'wc_new_order'       => array(
 				'subject' => __( 'New WooCommerce order #{{order_number}}', 'niftyconnect' ),
 				'body'    => __( "A new order was placed on {{site_name}}.\n\nOrder: #{{order_number}}\nCustomer: {{customer_name}}\nTotal: {{order_total}}\nPayment: {{payment_method}}\nView: {{order_url}}", 'niftyconnect' ),
@@ -303,6 +307,7 @@ final class Settings {
 			'comment_new'        => array( 'administrator', 'editor', 'author' ),
 			'comment_pending'    => array( 'administrator', 'editor' ),
 			'user_registered'    => array( 'administrator' ),
+			'admin_login'        => array( 'administrator' ),
 			'wc_new_order'       => array( 'administrator', 'shop_manager' ),
 			'wc_order_completed' => array( 'administrator', 'shop_manager' ),
 		);

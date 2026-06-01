@@ -43,6 +43,7 @@ final class WordPress_Events {
 		add_action( 'post_updated', array( $this, 'on_post_updated' ), 10, 3 );
 		add_action( 'comment_post', array( $this, 'on_comment_post' ), 10, 3 );
 		add_action( 'user_register', array( $this, 'on_user_register' ), 10, 1 );
+		add_action( 'wp_login', array( $this, 'on_wp_login' ), 10, 2 );
 	}
 
 	/**
@@ -138,6 +139,23 @@ final class WordPress_Events {
 	}
 
 	/**
+	 * Trigger when an administrator logs in.
+	 *
+	 * @param string   $user_login Username.
+	 * @param \WP_User $user       User object.
+	 * @return void
+	 */
+	public function on_wp_login( $user_login, $user ) {
+		unset( $user_login );
+
+		if ( ! $user instanceof \WP_User || ! user_can( $user, 'manage_options' ) ) {
+			return;
+		}
+
+		$this->notifications->send_event( 'admin_login', $this->user_context( $user ) );
+	}
+
+	/**
 	 * Check if a post should trigger post events.
 	 *
 	 * @param mixed $post Post value.
@@ -188,6 +206,30 @@ final class WordPress_Events {
 			'post_id'         => $post ? $post->ID : 0,
 			'post_title'      => $post ? get_the_title( $post ) : '',
 			'post_url'        => $post ? get_permalink( $post ) : '',
+		);
+	}
+
+	/**
+	 * Build user template context.
+	 *
+	 * @param \WP_User $user User object.
+	 * @return array
+	 */
+	private function user_context( \WP_User $user ) {
+		$roles      = is_array( $user->roles ) ? $user->roles : array();
+		$remote_ip  = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
+
+		return array(
+			'user_id'           => $user->ID,
+			'user_login'        => $user->user_login,
+			'user_email'        => $user->user_email,
+			'user_display_name' => $user->display_name,
+			'user_role'         => implode( ', ', array_map( 'translate_user_role', $roles ) ),
+			'user_url'          => admin_url( 'user-edit.php?user_id=' . absint( $user->ID ) ),
+			'login_time'        => wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ),
+			'login_ip'          => $remote_ip,
+			'login_user_agent'  => $user_agent,
 		);
 	}
 }

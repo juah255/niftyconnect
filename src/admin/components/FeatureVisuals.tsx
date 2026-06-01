@@ -57,6 +57,11 @@ export function getGroupMeta( key: string ) {
 			description: 'Order status, inventory, and customer triggers',
 			icon: ShoppingBag,
 		},
+		security: {
+			description:
+				'Authentication and administrator access notifications',
+			icon: Shield,
+		},
 		system: {
 			description:
 				'System notifications, summaries, and fallback content',
@@ -79,6 +84,7 @@ export function getEventIcon( key: string, category?: string ): LucideIcon {
 		comment_new: MessageSquare,
 		comment_pending: Clock3,
 		user_registered: UserPlus,
+		admin_login: Shield,
 		wc_new_order: ShoppingCart,
 		wc_order_completed: CheckCircle2,
 		wc_order_status: RefreshCw,

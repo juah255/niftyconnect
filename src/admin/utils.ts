@@ -44,6 +44,7 @@ export function eventItems(
 export function eventCategoryLabel( category: string ): string {
 	const labels: Record< string, string > = {
 		wordpress: __( 'WordPress events', 'niftyconnect' ),
+		security: __( 'Security events', 'niftyconnect' ),
 		woocommerce: __( 'WooCommerce events', 'niftyconnect' ),
 		system: __( 'System events', 'niftyconnect' ),
 	};
@@ -61,8 +62,9 @@ export function eventCategoryLabel( category: string ): string {
 export function orderedEventCategories( categories: string[] ): string[] {
 	const priority: Record< string, number > = {
 		wordpress: 0,
-		woocommerce: 1,
-		system: 2,
+		security: 1,
+		woocommerce: 2,
+		system: 3,
 	};
 
 	return Array.from( new Set( categories ) ).sort( ( left, right ) => {
