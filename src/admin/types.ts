@@ -44,22 +44,6 @@ export interface GeneralSettings {
 	daily_limit: number;
 }
 
-export type RuleOperator =
-	| 'equals'
-	| 'contains'
-	| 'greater_than'
-	| 'less_than'
-	| 'in';
-
-export interface SmartRule {
-	id: string;
-	enabled: boolean;
-	event: string;
-	field: string;
-	operator: RuleOperator;
-	value: string;
-}
-
 export interface ActivityItem {
 	id: number;
 	eventKey: string;
@@ -79,7 +63,7 @@ export interface Settings {
 	trigger_recipients: Record< string, TriggerRecipientSettings >;
 	templates: Record< string, Template >;
 	template_modes: Record< string, TemplateMode >;
-	rules?: SmartRule[];
+	rules?: Array< Record< string, unknown > >;
 }
 
 export interface Payload {

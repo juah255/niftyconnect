@@ -12,6 +12,21 @@ declare module '@wordpress/i18n' {
 	): string;
 }
 
+declare module '@wordpress/hooks' {
+	export function applyFilters< T >(
+		hookName: string,
+		value: T,
+		...args: unknown[]
+	): T;
+
+	export function addFilter(
+		hookName: string,
+		namespace: string,
+		callback: ( value: unknown, ...args: unknown[] ) => unknown,
+		priority?: number
+	): void;
+}
+
 declare module '@wordpress/api-fetch' {
 	type ApiFetchOptions = {
 		path?: string;

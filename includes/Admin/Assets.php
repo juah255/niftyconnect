@@ -44,11 +44,11 @@ final class Assets {
 				'dependencies' => array( 'wp-element', 'wp-i18n', 'wp-api-fetch' ),
 				'version'      => NIFTYCONNECT_VERSION,
 			);
-		$css_file   = NIFTYCONNECT_DIR . 'build/admin.css';
-		$css_url    = file_exists( $css_file )
+		$css_file    = NIFTYCONNECT_DIR . 'build/admin.css';
+		$css_url     = file_exists( $css_file )
 			? NIFTYCONNECT_URL . 'build/admin.css'
 			: NIFTYCONNECT_URL . 'assets/css/admin.css';
-		$css_ver    = file_exists( $css_file ) ? $asset['version'] : NIFTYCONNECT_VERSION;
+		$css_ver     = file_exists( $css_file ) ? $asset['version'] : NIFTYCONNECT_VERSION;
 
 		wp_enqueue_style(
 			'niftyconnect-admin',
