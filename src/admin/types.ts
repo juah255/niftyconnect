@@ -10,6 +10,7 @@ export interface FeatureDefinition {
 	label: string;
 	description: string;
 	category?: string;
+	routeable?: boolean;
 }
 
 export interface Template {

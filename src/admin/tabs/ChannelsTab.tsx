@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
+import { Plus, Trash2 } from 'lucide-react';
 
 import {
 	eventCategoryGroups,
@@ -10,6 +11,8 @@ import type {
 	ChannelSettings,
 	FeatureDefinition,
 	Payload,
+	RuleOperator,
+	SmartRule,
 	TriggerRecipientSettings,
 	UpdateSettings,
 } from '../types';
@@ -29,6 +32,7 @@ import {
 	AccordionTrigger,
 } from '../components/ui/Accordion';
 import Switch from '../components/ui/Switch';
+import Button from '../components/ui/Button';
 import {
 	Card,
 	CardContent,
@@ -41,6 +45,19 @@ interface ChannelsTabProps {
 	payload: Payload;
 	updateSettings: UpdateSettings;
 }
+
+interface RuleFieldOption {
+	label: string;
+	value: string;
+}
+
+const operatorOptions: Array< { label: string; value: RuleOperator } > = [
+	{ label: __( 'is exactly', 'niftyconnect' ), value: 'equals' },
+	{ label: __( 'contains', 'niftyconnect' ), value: 'contains' },
+	{ label: __( 'is greater than', 'niftyconnect' ), value: 'greater_than' },
+	{ label: __( 'is less than', 'niftyconnect' ), value: 'less_than' },
+	{ label: __( 'is one of', 'niftyconnect' ), value: 'in' },
+];
 
 export default function ChannelsTab( {
 	payload,
@@ -298,6 +315,22 @@ function ChannelEventRoutes( {
 																updateSettings
 															}
 														/>
+														{ Array.isArray(
+															payload.settings
+																.rules
+														) && (
+															<TriggerConditions
+																eventDef={
+																	eventDef
+																}
+																payload={
+																	payload
+																}
+																updateSettings={
+																	updateSettings
+																}
+															/>
+														) }
 													</div>
 												</div>
 											</div>
@@ -488,4 +521,402 @@ function TriggerRecipients( {
 			) }
 		</div>
 	);
+}
+
+function TriggerConditions( {
+	eventDef,
+	payload,
+	updateSettings,
+}: {
+	eventDef: FeatureDefinition;
+	payload: Payload;
+	updateSettings: UpdateSettings;
+} ) {
+	const eventRules = ( payload.settings.rules || [] )
+		.map( ( rule, index ) => ( { index, rule } ) )
+		.filter(
+			( item ) =>
+				item.rule.event === eventDef.key && item.rule.enabled !== false
+		);
+	const enabled = eventRules.length > 0;
+
+	function addCondition() {
+		updateSettings( ( draft ) => {
+			if ( ! draft.rules ) {
+				draft.rules = [];
+			}
+
+			draft.rules.push( defaultRuleForEvent( eventDef.key ) );
+		} );
+	}
+
+	function updateCondition( index: number, patch: Partial< SmartRule > ) {
+		updateSettings( ( draft ) => {
+			if ( ! draft.rules?.[ index ] ) {
+				return;
+			}
+
+			draft.rules[ index ] = {
+				...draft.rules[ index ],
+				...patch,
+			};
+		} );
+	}
+
+	function removeCondition( index: number ) {
+		updateSettings( ( draft ) => {
+			if ( ! draft.rules ) {
+				return;
+			}
+
+			draft.rules = draft.rules.filter(
+				( _rule, ruleIndex ) => ruleIndex !== index
+			);
+		} );
+	}
+
+	function setConditionsEnabled( value: boolean ) {
+		updateSettings( ( draft ) => {
+			if ( ! draft.rules ) {
+				draft.rules = [];
+			}
+
+			if ( value ) {
+				const hasRule = draft.rules.some(
+					( rule ) =>
+						rule.event === eventDef.key && rule.enabled !== false
+				);
+
+				if ( ! hasRule ) {
+					draft.rules.push( defaultRuleForEvent( eventDef.key ) );
+				}
+
+				return;
+			}
+
+			draft.rules = draft.rules.filter(
+				( rule ) => rule.event !== eventDef.key
+			);
+		} );
+	}
+
+	return (
+		<div className="mt-3 space-y-3 rounded-xl border border-slate-200 bg-white p-3.5">
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<div>
+					<h5 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+						{ __( 'Conditions', 'niftyconnect' ) }
+					</h5>
+					<p className="mt-1 text-sm text-slate-500">
+						{ enabled
+							? __(
+									'Only send when every condition matches.',
+									'niftyconnect'
+							  )
+							: __(
+									'Always send when this trigger fires.',
+									'niftyconnect'
+							  ) }
+					</p>
+				</div>
+				<label
+					className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700"
+					htmlFor={ `nh-trigger-${ eventDef.key }-conditions-enabled` }
+				>
+					<span>{ __( 'Only send when', 'niftyconnect' ) }</span>
+					<Switch
+						checked={ enabled }
+						id={ `nh-trigger-${ eventDef.key }-conditions-enabled` }
+						onCheckedChange={ setConditionsEnabled }
+					/>
+				</label>
+			</div>
+
+			{ enabled && (
+				<div className="space-y-3">
+					{ eventRules.map( ( { index, rule } ) => {
+						const fieldOptions = fieldOptionsForRule( rule );
+
+						return (
+							<div
+								key={ rule.id || index }
+								className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 lg:grid-cols-[1fr_1fr_1fr_auto]"
+							>
+								<Field
+									id={ `nh-trigger-${ eventDef.key }-rule-${ index }-field` }
+									label={
+										fieldOptions.length
+											? __( 'Field', 'niftyconnect' )
+											: __(
+													'Advanced field key',
+													'niftyconnect'
+											  )
+									}
+									value={ rule.field }
+									options={ fieldOptions }
+									placeholder="order_total_raw"
+									help={
+										fieldOptions.length
+											? ''
+											: __(
+													'Use the internal field key supplied by the custom event.',
+													'niftyconnect'
+											  )
+									}
+									onChange={ ( field ) =>
+										updateCondition( index, { field } )
+									}
+								/>
+								<Field
+									id={ `nh-trigger-${ eventDef.key }-rule-${ index }-operator` }
+									label={ __( 'Condition', 'niftyconnect' ) }
+									value={ rule.operator }
+									options={ operatorOptions }
+									onChange={ ( operator ) =>
+										updateCondition( index, {
+											operator: operator as RuleOperator,
+										} )
+									}
+								/>
+								<Field
+									id={ `nh-trigger-${ eventDef.key }-rule-${ index }-value` }
+									label={ __( 'Value', 'niftyconnect' ) }
+									value={ rule.value }
+									onChange={ ( value ) =>
+										updateCondition( index, { value } )
+									}
+								/>
+								<div className="flex items-end">
+									<Button
+										aria-label={ __(
+											'Delete condition',
+											'niftyconnect'
+										) }
+										onClick={ () =>
+											removeCondition( index )
+										}
+										variant="secondary"
+									>
+										<Trash2 className="h-4 w-4" />
+									</Button>
+								</div>
+							</div>
+						);
+					} ) }
+					<Button onClick={ addCondition } variant="secondary">
+						<Plus className="mr-2 h-4 w-4" />
+						{ __( 'Add Condition', 'niftyconnect' ) }
+					</Button>
+				</div>
+			) }
+		</div>
+	);
+}
+
+function defaultRuleForEvent( eventKey: string ): SmartRule {
+	return {
+		id: `rule_${ eventKey }_${ Date.now() }`,
+		enabled: true,
+		event: eventKey,
+		field: fieldOptionsForEvent( eventKey )[ 0 ]?.value || '',
+		operator: 'equals',
+		value: '',
+	};
+}
+
+function fieldOptionsForRule( rule: SmartRule ): RuleFieldOption[] {
+	const fieldOptions = fieldOptionsForEvent( rule.event );
+	const fieldExists = fieldOptions.some(
+		( option ) => option.value === rule.field
+	);
+
+	if ( ! rule.field || ! fieldOptions.length || fieldExists ) {
+		return fieldOptions;
+	}
+
+	return [
+		...fieldOptions,
+		{
+			label: `${ __( 'Custom field', 'niftyconnect' ) }: ${ rule.field }`,
+			value: rule.field,
+		},
+	];
+}
+
+function fieldOptionsForEvent( eventKey: string ): RuleFieldOption[] {
+	const orderFields = [
+		{ label: __( 'Order number', 'niftyconnect' ), value: 'order_number' },
+		{ label: __( 'Order status', 'niftyconnect' ), value: 'order_status' },
+		{
+			label: __( 'Order total', 'niftyconnect' ),
+			value: 'order_total_raw',
+		},
+		{ label: __( 'Currency', 'niftyconnect' ), value: 'order_currency' },
+		{
+			label: __( 'Customer name', 'niftyconnect' ),
+			value: 'customer_name',
+		},
+		{
+			label: __( 'Customer email', 'niftyconnect' ),
+			value: 'customer_email',
+		},
+		{
+			label: __( 'Payment method', 'niftyconnect' ),
+			value: 'payment_method',
+		},
+		{
+			label: __( 'Billing country', 'niftyconnect' ),
+			value: 'billing_country',
+		},
+	];
+	const productFields = [
+		{ label: __( 'Product name', 'niftyconnect' ), value: 'product_name' },
+		{ label: __( 'SKU', 'niftyconnect' ), value: 'product_sku' },
+		{
+			label: __( 'Stock quantity', 'niftyconnect' ),
+			value: 'stock_quantity',
+		},
+		{ label: __( 'Stock status', 'niftyconnect' ), value: 'stock_status' },
+		{
+			label: __( 'Low stock amount', 'niftyconnect' ),
+			value: 'low_stock_amount',
+		},
+	];
+	const fields: Record< string, RuleFieldOption[] > = {
+		post_published: [
+			{ label: __( 'Post title', 'niftyconnect' ), value: 'post_title' },
+			{
+				label: __( 'Post author', 'niftyconnect' ),
+				value: 'post_author',
+			},
+			{ label: __( 'Post type', 'niftyconnect' ), value: 'post_type' },
+		],
+		post_updated: [
+			{ label: __( 'Post title', 'niftyconnect' ), value: 'post_title' },
+			{
+				label: __( 'Post author', 'niftyconnect' ),
+				value: 'post_author',
+			},
+			{ label: __( 'Post type', 'niftyconnect' ), value: 'post_type' },
+		],
+		comment_new: [
+			{
+				label: __( 'Comment author', 'niftyconnect' ),
+				value: 'comment_author',
+			},
+			{
+				label: __( 'Comment email', 'niftyconnect' ),
+				value: 'comment_email',
+			},
+			{
+				label: __( 'Comment content', 'niftyconnect' ),
+				value: 'comment_content',
+			},
+			{ label: __( 'Post title', 'niftyconnect' ), value: 'post_title' },
+		],
+		comment_pending: [
+			{
+				label: __( 'Comment author', 'niftyconnect' ),
+				value: 'comment_author',
+			},
+			{
+				label: __( 'Comment email', 'niftyconnect' ),
+				value: 'comment_email',
+			},
+			{
+				label: __( 'Comment content', 'niftyconnect' ),
+				value: 'comment_content',
+			},
+			{ label: __( 'Post title', 'niftyconnect' ), value: 'post_title' },
+		],
+		user_registered: [
+			{ label: __( 'Username', 'niftyconnect' ), value: 'user_login' },
+			{ label: __( 'User email', 'niftyconnect' ), value: 'user_email' },
+			{ label: __( 'User role', 'niftyconnect' ), value: 'user_role' },
+		],
+		wc_new_order: orderFields,
+		wc_order_completed: orderFields,
+		wc_order_status: [
+			{
+				label: __( 'Previous status', 'niftyconnect' ),
+				value: 'old_status',
+			},
+			{ label: __( 'New status', 'niftyconnect' ), value: 'new_status' },
+			...orderFields,
+		],
+		wc_new_customer: [
+			{
+				label: __( 'Customer name', 'niftyconnect' ),
+				value: 'customer_name',
+			},
+			{
+				label: __( 'Customer email', 'niftyconnect' ),
+				value: 'customer_email',
+			},
+		],
+		wc_low_stock: productFields,
+		wc_back_in_stock: productFields,
+		wc_abandoned_cart: [
+			{
+				label: __( 'Customer name', 'niftyconnect' ),
+				value: 'customer_name',
+			},
+			{
+				label: __( 'Customer email', 'niftyconnect' ),
+				value: 'customer_email',
+			},
+			{
+				label: __( 'Cart total', 'niftyconnect' ),
+				value: 'cart_total_raw',
+			},
+			{ label: __( 'Cart items', 'niftyconnect' ), value: 'cart_items' },
+		],
+		wc_abandoned_cart_customer: [
+			{
+				label: __( 'Customer name', 'niftyconnect' ),
+				value: 'customer_name',
+			},
+			{
+				label: __( 'Customer email', 'niftyconnect' ),
+				value: 'customer_email',
+			},
+			{
+				label: __( 'Cart total', 'niftyconnect' ),
+				value: 'cart_total_raw',
+			},
+			{ label: __( 'Cart items', 'niftyconnect' ), value: 'cart_items' },
+		],
+		summary_daily: [
+			{
+				label: __( 'Summary count', 'niftyconnect' ),
+				value: 'summary_count',
+			},
+			{
+				label: __( 'Summary items', 'niftyconnect' ),
+				value: 'summary_items',
+			},
+		],
+		summary_weekly: [
+			{
+				label: __( 'Summary count', 'niftyconnect' ),
+				value: 'summary_count',
+			},
+			{
+				label: __( 'Summary items', 'niftyconnect' ),
+				value: 'summary_items',
+			},
+		],
+		summary_monthly: [
+			{
+				label: __( 'Summary count', 'niftyconnect' ),
+				value: 'summary_count',
+			},
+			{
+				label: __( 'Summary items', 'niftyconnect' ),
+				value: 'summary_items',
+			},
+		],
+	};
+
+	return fields[ eventKey ] || [];
 }

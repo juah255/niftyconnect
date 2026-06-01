@@ -86,6 +86,7 @@ export function getEventIcon( key: string, category?: string ): LucideIcon {
 		wc_low_stock: Package,
 		wc_back_in_stock: Package,
 		wc_abandoned_cart: ShoppingCart,
+		wc_abandoned_cart_customer: ShoppingCart,
 		summary_daily: CalendarDays,
 		summary_weekly: CalendarDays,
 		summary_monthly: CalendarDays,

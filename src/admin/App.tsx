@@ -1,12 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
-import {
-	BellRing,
-	ChartColumn,
-	FileText,
-	Settings2,
-	SlidersHorizontal,
-} from 'lucide-react';
+import { BellRing, ChartColumn, FileText, Settings2 } from 'lucide-react';
 
 import { clone } from './utils';
 import { getSettings, saveSettings } from './api';
@@ -15,7 +9,6 @@ import Header from './components/Header';
 import Button from './components/ui/Button';
 import OverviewTab from './tabs/OverviewTab';
 import ChannelsTab from './tabs/ChannelsTab';
-import RulesTab from './tabs/RulesTab';
 import SettingsTab from './tabs/SettingsTab';
 import TemplatesTab from './tabs/TemplatesTab';
 
@@ -34,11 +27,6 @@ const tabs = [
 		key: 'templates',
 		label: __( 'Templates', 'niftyconnect' ),
 		icon: FileText,
-	},
-	{
-		key: 'rules',
-		label: __( 'Rules', 'niftyconnect' ),
-		icon: SlidersHorizontal,
 	},
 	{
 		key: 'settings',
@@ -82,12 +70,7 @@ export default function App() {
 			return;
 		}
 
-		const visible = tabs.some(
-			( tab ) =>
-				tab.key === activeTab &&
-				( tab.key !== 'rules' ||
-					Array.isArray( payload.settings.rules ) )
-		);
+		const visible = tabs.some( ( tab ) => tab.key === activeTab );
 
 		if ( ! visible ) {
 			setActiveTab( 'overview' );
@@ -155,10 +138,7 @@ export default function App() {
 		);
 	}
 
-	const visibleTabs = tabs.filter(
-		( tab ) =>
-			tab.key !== 'rules' || Array.isArray( payload.settings.rules )
-	);
+	const visibleTabs = tabs;
 
 	return (
 		<div className="nh-app bg-slate-50">
@@ -211,13 +191,6 @@ export default function App() {
 								updateSettings={ updateSettings }
 							/>
 						) }
-						{ activeTab === 'rules' &&
-							Array.isArray( payload.settings.rules ) && (
-								<RulesTab
-									payload={ payload }
-									updateSettings={ updateSettings }
-								/>
-							) }
 						{ activeTab === 'settings' && (
 							<SettingsTab
 								payload={ payload }

@@ -82,14 +82,18 @@ export function orderedEventCategories( categories: string[] ): string[] {
 export function eventCategoryGroups( features: {
 	events: Record< string, FeatureDefinition >;
 } ): Array< { key: string; label: string; items: FeatureDefinition[] } > {
+	const routeableEvents = objectValues( features.events ).filter(
+		( event ) => event.routeable !== false
+	);
+
 	return orderedEventCategories(
-		objectValues( features.events ).map(
-			( event ) => event.category || 'system'
-		)
+		routeableEvents.map( ( event ) => event.category || 'system' )
 	).map( ( category ) => ( {
 		key: category,
 		label: eventCategoryLabel( category ),
-		items: eventItems( features, category ),
+		items: routeableEvents.filter(
+			( event ) => ( event.category || 'system' ) === category
+		),
 	} ) );
 }
 
