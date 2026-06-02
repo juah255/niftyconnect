@@ -8,7 +8,6 @@ import {
 	ChevronDown,
 	Crown,
 	FileText,
-	Globe2,
 	Mail,
 	MessageCircle,
 	MessageSquare,
@@ -61,7 +60,8 @@ interface SupportLink {
 	className: string;
 }
 
-const DEFAULT_UPGRADE_URL = 'https://wordpress.org/plugins/niftyconnect/';
+const DEFAULT_UPGRADE_URL =
+	'https://checkout.freemius.com/plugin/30851/plan/50633/';
 const DEFAULT_SUPPORT_URL =
 	'https://wordpress.org/support/plugin/niftyconnect/';
 
@@ -259,7 +259,7 @@ function UpgradeBanner() {
 		<section className="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
 			<p className="m-0 text-sm font-medium text-slate-900">
 				{ __(
-					'Want unlimited channels, WooCommerce smart rules & priority support?',
+					'Need advanced notification automation for your WordPress site?',
 					'niftyconnect'
 				) }
 			</p>
@@ -285,38 +285,31 @@ function SupportPanel() {
 	const defaultSupportLinks: SupportLink[] = [
 		{
 			label: __( 'Email', 'niftyconnect' ),
-			href: DEFAULT_SUPPORT_URL,
+			href: 'mailto:solveproblemsbd@gmail.com',
 			icon: Mail,
 			className:
 				'bg-slate-900 shadow-slate-900/20 ring-slate-700/20 hover:bg-slate-800 hover:shadow-slate-900/30 focus:bg-slate-800',
 		},
 		{
 			label: __( 'Join Telegram', 'niftyconnect' ),
-			href: DEFAULT_SUPPORT_URL,
+			href: 'https://web.telegram.org/a/#-5180087138',
 			icon: Send,
 			className:
 				'bg-sky-500 shadow-sky-500/25 ring-sky-400/30 hover:bg-sky-600 hover:shadow-sky-500/35 focus:bg-sky-600',
 		},
 		{
 			label: __( 'Join Discord', 'niftyconnect' ),
-			href: DEFAULT_SUPPORT_URL,
+			href: 'https://discord.gg/DHQEC4wU',
 			icon: MessageSquare,
 			className:
 				'bg-indigo-500 shadow-indigo-500/25 ring-indigo-400/30 hover:bg-indigo-600 hover:shadow-indigo-500/35 focus:bg-indigo-600',
 		},
 		{
 			label: __( 'WhatsApp Group', 'niftyconnect' ),
-			href: DEFAULT_SUPPORT_URL,
+			href: 'https://chat.whatsapp.com/GCsqgVZRvsN20xHkdEz1RL?s=cl&p=a&ilr=2',
 			icon: MessageCircle,
 			className:
 				'bg-emerald-500 shadow-emerald-500/25 ring-emerald-400/30 hover:bg-emerald-600 hover:shadow-emerald-500/35 focus:bg-emerald-600',
-		},
-		{
-			label: __( 'Facebook Group', 'niftyconnect' ),
-			href: DEFAULT_SUPPORT_URL,
-			icon: Globe2,
-			className:
-				'bg-blue-500 shadow-blue-500/25 ring-blue-400/30 hover:bg-blue-600 hover:shadow-blue-500/35 focus:bg-blue-600',
 		},
 	];
 	const supportLinks = applyFilters< SupportLink[] >(
