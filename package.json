@@ -1,6 +1,6 @@
 {
 	"name": "niftyconnect",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "React admin app build tooling for the niftyConnect plugin.",
 	"private": true,
 	"scripts": {

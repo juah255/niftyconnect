@@ -4,7 +4,7 @@ Tags: notifications, email notifications, woocommerce, comments, users
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,12 @@ Telegram Terms of Service: https://telegram.org/tos
 Telegram Privacy Policy: https://telegram.org/privacy
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Added admin login alert notification.
+* Added support links for easier help and contact.
+* Improved plugin admin settings page.
 
 = 1.0.0 =
 
