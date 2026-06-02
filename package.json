@@ -11,6 +11,7 @@
 		"format": "wp-scripts format src",
 		"i18n": "wp i18n make-pot . languages/niftyconnect.pot --slug=niftyconnect --domain=niftyconnect --exclude=node_modules,build,dist,vendor,.git",
 		"zip": "node scripts/package-plugin.mjs",
+		"release:prepare": "node scripts/prepare-wporg-release.mjs",
 		"production": "npm run typecheck && npm run build && npm run i18n && npm run zip"
 	},
 	"devDependencies": {

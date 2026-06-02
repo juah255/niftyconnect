@@ -1,0 +1,65 @@
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wordpress-org-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy tagged release
+    runs-on: ubuntu-latest
+    environment: wordpress-org
+
+    steps:
+      - name: Check out release tag
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Set up PHP and WP-CLI
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: wp-cli
+          coverage: none
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint JavaScript and TypeScript
+        run: npm run lint:js
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Build translation template
+        run: npm run i18n
+
+      - name: Prepare WordPress.org release directory
+        run: npm run release:prepare -- "${{ github.ref_name }}"
+
+      - name: Deploy to WordPress.org SVN
+        uses: 10up/action-wordpress-plugin-deploy@2.3.0
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: niftyconnect
+          BUILD_DIR: .wporg-release
+          ASSETS_DIR: .wordpress-org
+        with:
+          generate-zip: true
