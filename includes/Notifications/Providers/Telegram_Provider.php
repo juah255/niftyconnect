@@ -50,7 +50,7 @@ final class Telegram_Provider implements Provider_Interface {
 		$chat_ids = isset( $context['telegram_chat_ids'] ) && is_array( $context['telegram_chat_ids'] )
 			? array_values( array_filter( array_map( array( Telegram_Chat::class, 'sanitize' ), $context['telegram_chat_ids'] ) ) )
 			: array();
-		$has_chat_id_override = array_key_exists( 'telegram_config_chat_id', $context );
+		$has_chat_id_override = ! empty( $context['telegram_config_chat_id'] );
 
 		if ( empty( $config['bot_token'] ) ) {
 			return new \WP_Error(

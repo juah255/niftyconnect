@@ -20,7 +20,8 @@ export function saveSettings( settings: Settings ): Promise< Payload > {
 export function sendTestNotification(
 	recipient: string,
 	channel = '',
-	telegramChatId = ''
+	telegramChatId = '',
+	whatsappPhone = ''
 ): Promise< {
 	message: string;
 	result: { limit: Payload[ 'stats' ][ 'limit' ] };
@@ -28,6 +29,11 @@ export function sendTestNotification(
 	return apiFetch( {
 		path: '/niftyconnect/v1/test',
 		method: 'POST',
-		data: { recipient, channel, telegram_chat_id: telegramChatId },
+		data: {
+			recipient,
+			channel,
+			telegram_chat_id: telegramChatId,
+			whatsapp_phone: whatsappPhone,
+		},
 	} );
 }

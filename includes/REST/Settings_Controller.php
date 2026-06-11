@@ -12,6 +12,7 @@ use NiftyConnect\Notifications\Notification_Manager;
 use NiftyConnect\Support\Feature_Registry;
 use NiftyConnect\Support\Settings;
 use NiftyConnect\Support\Telegram_Chat;
+use NiftyConnect\Support\WhatsApp_Number;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -100,6 +101,11 @@ final class Settings_Controller {
 						'required'          => false,
 						'sanitize_callback' => array( Telegram_Chat::class, 'sanitize' ),
 					),
+					'whatsapp_phone' => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => array( WhatsApp_Number::class, 'sanitize' ),
+					),
 				),
 			)
 		);
@@ -170,7 +176,10 @@ final class Settings_Controller {
 		$telegram_chat_id = $request->has_param( 'telegram_chat_id' )
 			? Telegram_Chat::sanitize( $request->get_param( 'telegram_chat_id' ) )
 			: null;
-		$result           = $this->notifications->send_test( $recipient, $channel, $telegram_chat_id );
+		$whatsapp_phone   = $request->has_param( 'whatsapp_phone' )
+			? WhatsApp_Number::sanitize( $request->get_param( 'whatsapp_phone' ) )
+			: null;
+		$result           = $this->notifications->send_test( $recipient, $channel, $telegram_chat_id, $whatsapp_phone );
 
 		if ( is_wp_error( $result ) ) {
 			$data = $result->get_error_data();
@@ -183,10 +192,20 @@ final class Settings_Controller {
 			return $result;
 		}
 
+		$message = __( 'Test notification sent.', 'niftyconnect' );
+
+		if (
+			$channel
+			&& isset( $result['results'][ $channel ]['message'] )
+			&& is_string( $result['results'][ $channel ]['message'] )
+		) {
+			$message = $result['results'][ $channel ]['message'];
+		}
+
 		return rest_ensure_response(
 			array(
 				'success' => true,
-				'message' => __( 'Test notification sent.', 'niftyconnect' ),
+				'message' => $message,
 				'result'  => $result,
 			)
 		);

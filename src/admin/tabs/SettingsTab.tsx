@@ -261,6 +261,15 @@ function ChannelSetupFields( {
 		);
 	}
 
+	if ( channelKey === 'whatsapp' ) {
+		return (
+			<WhatsAppSetupFields
+				settings={ settings }
+				updateSettings={ updateSettings }
+			/>
+		);
+	}
+
 	return (
 		<div className="space-y-4">
 			<h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
@@ -284,6 +293,218 @@ function ChannelSetupFields( {
 					} }
 				/>
 			) ) }
+		</div>
+	);
+}
+
+function WhatsAppSetupFields( {
+	settings,
+	updateSettings,
+}: {
+	settings: ChannelSettings;
+	updateSettings: UpdateSettings;
+} ) {
+	const configValue = settings.config || {};
+	const messageType = configValue.message_type || 'template';
+	let messageTypeHelp = __(
+		'Free-form text requires an open customer-service conversation window. To test without one, use an approved template such as hello_world with no body variables.',
+		'niftyconnect'
+	);
+
+	if ( messageType === 'template' ) {
+		messageTypeHelp = __(
+			'Recommended for automated notifications. The template must already be approved in WhatsApp Manager.',
+			'niftyconnect'
+		);
+	}
+
+	function updateConfig( key: string, value: string ) {
+		updateSettings( ( draft ) => {
+			if ( ! draft.channels.whatsapp.config ) {
+				draft.channels.whatsapp.config = {};
+			}
+
+			draft.channels.whatsapp.config[ key ] = value;
+		} );
+	}
+
+	return (
+		<div className="space-y-4">
+			<h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+				{ __( 'Setup', 'niftyconnect' ) }
+			</h4>
+			<Field
+				id="nh-whatsapp-access-token"
+				label={ __( 'Access token', 'niftyconnect' ) }
+				type="password"
+				value={ configValue.access_token || '' }
+				help={ __(
+					'Use a system user access token with the whatsapp_business_messaging permission. You may instead define NIFTYCONNECT_WHATSAPP_ACCESS_TOKEN in wp-config.php.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) => updateConfig( 'access_token', value ) }
+			/>
+			<Field
+				id="nh-whatsapp-phone-number-id"
+				label={ __( 'Phone number ID', 'niftyconnect' ) }
+				value={ configValue.phone_number_id || '' }
+				help={ __(
+					'Use the numeric phone number ID shown in your Meta WhatsApp API setup, not the visible business phone number.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) =>
+					updateConfig( 'phone_number_id', value )
+				}
+			/>
+			<Field
+				id="nh-whatsapp-recipient-phone"
+				label={ __( 'Default recipient phone', 'niftyconnect' ) }
+				type="tel"
+				value={ configValue.recipient_phone || '' }
+				help={ __(
+					'Enter an international WhatsApp number with country code. Role-based delivery uses the WhatsApp phone saved on each WordPress user profile and falls back to this number.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) =>
+					updateConfig( 'recipient_phone', value )
+				}
+			/>
+			<Field
+				id="nh-whatsapp-api-version"
+				label={ __( 'Graph API version', 'niftyconnect' ) }
+				value={ configValue.api_version || 'v23.0' }
+				help={ __(
+					'Use a supported Meta Graph API version such as v23.0.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) => updateConfig( 'api_version', value ) }
+			/>
+			<div className="space-y-4 rounded-xl border border-slate-200 p-4">
+				<h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+					{ __( 'Message options', 'niftyconnect' ) }
+				</h4>
+				<Field
+					id="nh-whatsapp-message-type"
+					label={ __( 'Message type', 'niftyconnect' ) }
+					value={ messageType }
+					options={ [
+						{
+							label: __( 'Approved template', 'niftyconnect' ),
+							value: 'template',
+						},
+						{
+							label: __( 'Free-form text', 'niftyconnect' ),
+							value: 'text',
+						},
+					] }
+					help={ messageTypeHelp }
+					onChange={ ( value ) =>
+						updateConfig( 'message_type', value )
+					}
+				/>
+				{ messageType === 'template' && (
+					<>
+						<Field
+							id="nh-whatsapp-template-name"
+							label={ __( 'Template name', 'niftyconnect' ) }
+							value={ configValue.template_name || '' }
+							help={ __(
+								'Enter the fallback approved template name. An event-specific template configured in the Templates tab overrides it.',
+								'niftyconnect'
+							) }
+							onChange={ ( value ) =>
+								updateConfig( 'template_name', value )
+							}
+						/>
+						<Field
+							id="nh-whatsapp-template-language"
+							label={ __(
+								'Template language code',
+								'niftyconnect'
+							) }
+							value={ configValue.template_language || 'en_US' }
+							help={ __(
+								'Use the language code of the approved template, for example en_US.',
+								'niftyconnect'
+							) }
+							onChange={ ( value ) =>
+								updateConfig( 'template_language', value )
+							}
+						/>
+						<Field
+							id="nh-whatsapp-template-parameters"
+							label={ __(
+								'Template body variables',
+								'niftyconnect'
+							) }
+							value={
+								configValue.template_parameters ||
+								'subject_body'
+							}
+							options={ [
+								{
+									label: __(
+										'Two variables: subject, body',
+										'niftyconnect'
+									),
+									value: 'subject_body',
+								},
+								{
+									label: __(
+										'One variable: full message',
+										'niftyconnect'
+									),
+									value: 'message',
+								},
+								{
+									label: __( 'No variables', 'niftyconnect' ),
+									value: 'none',
+								},
+							] }
+							help={ __(
+								'This must match the number and order of variables in the approved template body.',
+								'niftyconnect'
+							) }
+							onChange={ ( value ) =>
+								updateConfig( 'template_parameters', value )
+							}
+						/>
+					</>
+				) }
+				{ messageType === 'text' && (
+					<Field
+						id="nh-whatsapp-preview-url"
+						label={ __( 'Link preview', 'niftyconnect' ) }
+						value={ configValue.preview_url || '' }
+						options={ [
+							{
+								label: __( 'Disabled', 'niftyconnect' ),
+								value: '',
+							},
+							{
+								label: __( 'Enabled', 'niftyconnect' ),
+								value: '1',
+							},
+						] }
+						onChange={ ( value ) =>
+							updateConfig( 'preview_url', value )
+						}
+					/>
+				) }
+				<p className="text-sm leading-6 text-slate-500">
+					<a
+						className="font-medium text-emerald-700 underline underline-offset-2 hover:text-emerald-800"
+						href="https://developers.facebook.com/docs/whatsapp/cloud-api/"
+						rel="noreferrer noopener"
+						target="_blank"
+					>
+						{ __(
+							'Open Meta Cloud API documentation',
+							'niftyconnect'
+						) }
+					</a>
+				</p>
+			</div>
 		</div>
 	);
 }
@@ -433,9 +654,11 @@ function ChannelTest( {
 		payload.settings.general.recipients[ 0 ] || ''
 	);
 	const [ telegramTestChatId, setTelegramTestChatId ] = useState( '' );
+	const [ whatsappTestPhone, setWhatsAppTestPhone ] = useState( '' );
 	const [ sending, setSending ] = useState( false );
 	const isEmail = channelKey === 'email';
 	const isTelegram = channelKey === 'telegram';
+	const isWhatsApp = channelKey === 'whatsapp';
 
 	function sendTest() {
 		setSending( true );
@@ -444,7 +667,8 @@ function ChannelTest( {
 		sendTestNotification(
 			isEmail ? recipient : '',
 			channelKey,
-			isTelegram ? telegramTestChatId : ''
+			isTelegram ? telegramTestChatId : '',
+			isWhatsApp ? whatsappTestPhone : ''
 		)
 			.then( ( response ) => {
 				setPayload( ( current ) => {
@@ -496,6 +720,19 @@ function ChannelTest( {
 						'niftyconnect'
 					) }
 					onChange={ setTelegramTestChatId }
+				/>
+			) }
+			{ isWhatsApp && (
+				<Field
+					id="nh-whatsapp-test-phone"
+					label={ __( 'Test recipient phone', 'niftyconnect' ) }
+					type="tel"
+					value={ whatsappTestPhone }
+					help={ __(
+						'Optional. This test-only number overrides the saved default recipient.',
+						'niftyconnect'
+					) }
+					onChange={ setWhatsAppTestPhone }
 				/>
 			) }
 			<Button disabled={ sending } onClick={ sendTest }>

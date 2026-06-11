@@ -17,7 +17,8 @@ export function orderedChannels(
 ): FeatureDefinition[] {
 	const priority: Record< string, number > = {
 		telegram: 0,
-		email: 1,
+		whatsapp: 1,
+		email: 2,
 	};
 
 	return objectValues( value ).sort( ( left, right ) => {

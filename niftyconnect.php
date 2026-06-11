@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: niftyConnect: Telegram and Email Notifications
+ * Plugin Name: niftyConnect: WhatsApp, Telegram and Email Notifications
  * Description: Receive important WordPress and WooCommerce event notifications through extensible notification channels.
  * Version: 1.0.1
  * Requires at least: 6.2

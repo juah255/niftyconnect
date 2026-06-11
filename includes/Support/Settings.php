@@ -89,11 +89,27 @@ final class Settings {
 					),
 					'events'  => self::default_channel_events(),
 				),
+				'whatsapp' => array(
+					'enabled' => false,
+					'config'  => array(
+						'access_token'        => '',
+						'phone_number_id'     => '',
+						'recipient_phone'     => '',
+						'api_version'         => 'v23.0',
+						'message_type'        => 'template',
+						'template_name'       => '',
+						'template_language'   => 'en_US',
+						'template_parameters' => 'subject_body',
+						'preview_url'         => '',
+					),
+					'events'  => self::default_channel_events(),
+				),
 			),
 			'triggers'            => self::default_channel_events(),
 			'trigger_recipients' => self::default_trigger_recipients(),
 			'templates'           => self::default_templates(),
 			'template_modes'      => self::default_template_modes(),
+			'whatsapp_templates' => self::default_whatsapp_templates(),
 			'limits'              => array(
 				'date' => current_time( 'Y-m-d' ),
 				'sent' => 0,
@@ -195,6 +211,27 @@ final class Settings {
 		}
 
 		return $modes;
+	}
+
+	/**
+	 * Default per-event WhatsApp approved template settings.
+	 *
+	 * An empty template name falls back to the global WhatsApp message settings.
+	 *
+	 * @return array
+	 */
+	public static function default_whatsapp_templates() {
+		$templates = array();
+
+		foreach ( array_keys( self::default_templates() ) as $key ) {
+			$templates[ $key ] = array(
+				'name'       => '',
+				'language'   => 'en_US',
+				'parameters' => 'subject_body',
+			);
+		}
+
+		return $templates;
 	}
 
 	/**
@@ -440,6 +477,9 @@ final class Settings {
 		$settings['template_modes'] = self::sanitize_template_modes(
 			isset( $input['template_modes'] ) && is_array( $input['template_modes'] ) ? $input['template_modes'] : array()
 		);
+		$settings['whatsapp_templates'] = self::sanitize_whatsapp_templates(
+			isset( $input['whatsapp_templates'] ) && is_array( $input['whatsapp_templates'] ) ? $input['whatsapp_templates'] : array()
+		);
 
 		$settings['limits'] = array(
 			'date' => isset( $current['limits']['date'] ) ? sanitize_text_field( $current['limits']['date'] ) : current_time( 'Y-m-d' ),
@@ -495,6 +535,33 @@ final class Settings {
 			$mode = isset( $modes[ $key ] ) ? sanitize_key( $modes[ $key ] ) : $sanitized[ $key ];
 
 			$sanitized[ $key ] = in_array( $mode, array( 'custom', 'default' ), true ) ? $mode : 'custom';
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Sanitize per-event WhatsApp approved template settings.
+	 *
+	 * @param array $templates Raw template settings keyed by event.
+	 * @return array
+	 */
+	private static function sanitize_whatsapp_templates( array $templates ) {
+		$sanitized = self::default_whatsapp_templates();
+
+		foreach ( $sanitized as $key => $defaults ) {
+			$template   = isset( $templates[ $key ] ) && is_array( $templates[ $key ] ) ? $templates[ $key ] : array();
+			$parameters = isset( $template['parameters'] ) ? sanitize_key( $template['parameters'] ) : $defaults['parameters'];
+
+			$sanitized[ $key ] = array(
+				'name'       => isset( $template['name'] ) ? sanitize_key( $template['name'] ) : $defaults['name'],
+				'language'   => isset( $template['language'] ) && '' !== trim( (string) $template['language'] )
+					? sanitize_text_field( $template['language'] )
+					: $defaults['language'],
+				'parameters' => in_array( $parameters, array( 'none', 'message', 'subject_body' ), true )
+					? $parameters
+					: $defaults['parameters'],
+			);
 		}
 
 		return $sanitized;
@@ -599,6 +666,21 @@ final class Settings {
 				$parse_mode             = isset( $config['parse_mode'] ) ? sanitize_text_field( $config['parse_mode'] ) : '';
 				$sanitized['parse_mode'] = in_array( $parse_mode, $parse_modes, true ) ? $parse_mode : '';
 				$sanitized['disable_web_page_preview'] = ! empty( $config['disable_web_page_preview'] ) ? '1' : '';
+				break;
+
+			case 'whatsapp':
+				$sanitized['access_token']    = isset( $config['access_token'] ) ? sanitize_text_field( $config['access_token'] ) : '';
+				$sanitized['phone_number_id'] = isset( $config['phone_number_id'] ) ? preg_replace( '/\D+/', '', sanitize_text_field( $config['phone_number_id'] ) ) : '';
+				$sanitized['recipient_phone'] = WhatsApp_Number::sanitize( isset( $config['recipient_phone'] ) ? $config['recipient_phone'] : '' );
+				$api_version                  = isset( $config['api_version'] ) ? sanitize_text_field( $config['api_version'] ) : 'v23.0';
+				$sanitized['api_version']     = preg_match( '/^v\d+\.\d+$/', $api_version ) ? $api_version : 'v23.0';
+				$message_type                 = isset( $config['message_type'] ) ? sanitize_key( $config['message_type'] ) : 'template';
+				$sanitized['message_type']    = in_array( $message_type, array( 'template', 'text' ), true ) ? $message_type : 'template';
+				$sanitized['template_name']   = isset( $config['template_name'] ) ? sanitize_key( $config['template_name'] ) : '';
+				$sanitized['template_language'] = isset( $config['template_language'] ) ? sanitize_text_field( $config['template_language'] ) : 'en_US';
+				$template_parameters          = isset( $config['template_parameters'] ) ? sanitize_key( $config['template_parameters'] ) : 'subject_body';
+				$sanitized['template_parameters'] = in_array( $template_parameters, array( 'none', 'message', 'subject_body' ), true ) ? $template_parameters : 'subject_body';
+				$sanitized['preview_url']     = ! empty( $config['preview_url'] ) ? '1' : '';
 				break;
 		}
 

@@ -7,6 +7,7 @@ import {
 	FileText,
 	FolderOpen,
 	Mail,
+	MessageCircle,
 	MessageSquare,
 	Package,
 	RefreshCw,
@@ -39,6 +40,7 @@ export function getChannelIcon( key: string ): LucideIcon {
 	const icons: Record< string, LucideIcon > = {
 		email: Mail,
 		telegram: Send,
+		whatsapp: MessageCircle,
 	};
 
 	return icons[ key ] || BellRing;

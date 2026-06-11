@@ -10,8 +10,10 @@ namespace NiftyConnect\Notifications;
 use NiftyConnect\Notifications\Providers\Email_Provider;
 use NiftyConnect\Notifications\Providers\Provider_Interface;
 use NiftyConnect\Notifications\Providers\Telegram_Provider;
+use NiftyConnect\Notifications\Providers\WhatsApp_Provider;
 use NiftyConnect\Support\Settings;
 use NiftyConnect\Support\Telegram_Chat;
+use NiftyConnect\Support\WhatsApp_Number;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,6 +53,7 @@ final class Notification_Manager {
 
 		$this->register_provider( new Email_Provider() );
 		$this->register_provider( new Telegram_Provider() );
+		$this->register_provider( new WhatsApp_Provider() );
 
 		/**
 		 * Fires when providers may be registered.
@@ -105,9 +108,10 @@ final class Notification_Manager {
 	 * @param string      $recipient        Test recipient email.
 	 * @param string      $channel          Optional channel key.
 	 * @param string|null $telegram_chat_id Optional Telegram chat ID override.
+	 * @param string|null $whatsapp_phone   Optional WhatsApp recipient override.
 	 * @return array|\WP_Error
 	 */
-	public function send_test( $recipient, $channel = '', $telegram_chat_id = null ) {
+	public function send_test( $recipient, $channel = '', $telegram_chat_id = null, $whatsapp_phone = null ) {
 		$channel = sanitize_key( $channel );
 
 		if ( $channel && ! isset( $this->providers[ $channel ] ) ) {
@@ -138,6 +142,9 @@ final class Notification_Manager {
 				'telegram_config_chat_id' => null === $telegram_chat_id
 					? null
 					: Telegram_Chat::sanitize( $telegram_chat_id ),
+				'whatsapp_config_recipient' => null === $whatsapp_phone
+					? null
+					: WhatsApp_Number::sanitize( $whatsapp_phone ),
 			),
 			array(
 				'recipients'             => array( sanitize_email( $recipient ) ),
@@ -196,6 +203,9 @@ final class Notification_Manager {
 		$context['telegram_chat_ids'] = isset( $args['telegram_chat_ids'] ) && is_array( $args['telegram_chat_ids'] )
 			? array_values( array_filter( array_map( array( Telegram_Chat::class, 'sanitize' ), $args['telegram_chat_ids'] ) ) )
 			: $targets['telegram_chat_ids'];
+		$context['whatsapp_recipient_phones'] = isset( $args['whatsapp_recipient_phones'] ) && is_array( $args['whatsapp_recipient_phones'] )
+			? array_values( array_filter( array_map( array( WhatsApp_Number::class, 'sanitize' ), $args['whatsapp_recipient_phones'] ) ) )
+			: $targets['whatsapp_recipient_phones'];
 		$subject  = $this->templates->render( $template['subject'], $context );
 		$body     = $this->templates->render( $template['body'], $context );
 
@@ -233,12 +243,19 @@ final class Notification_Manager {
 
 			$result  = $provider->send( $notification );
 			$success = ! is_wp_error( $result );
-			$message = $success ? __( 'Sent successfully.', 'niftyconnect' ) : $result->get_error_message();
+			$message = $success
+				? ( is_array( $result ) && ! empty( $result['message'] ) ? sanitize_text_field( $result['message'] ) : __( 'Sent successfully.', 'niftyconnect' ) )
+				: $result->get_error_message();
+			$recipient_count = $this->provider_recipient_count( $key, $recipients, $context );
 
 			$results[ $key ] = array(
 				'success' => $success,
 				'message' => $message,
 			);
+
+			if ( $success && is_array( $result ) ) {
+				$results[ $key ] += $result;
+			}
 
 			Activity_Log::record(
 				$event_key,
@@ -246,7 +263,7 @@ final class Notification_Manager {
 				$success ? 'success' : 'failed',
 				$subject,
 				$message,
-				count( $recipients )
+				$recipient_count
 			);
 
 			if ( $success ) {
@@ -297,9 +314,10 @@ final class Notification_Manager {
 		$config = isset( $settings['trigger_recipients'][ $event_key ] ) && is_array( $settings['trigger_recipients'][ $event_key ] )
 			? $settings['trigger_recipients'][ $event_key ]
 			: array();
-		$emails  = array();
-		$chat_ids = array();
-		$roles   = isset( $config['roles'] ) && is_array( $config['roles'] ) ? array_map( 'sanitize_key', $config['roles'] ) : array();
+		$emails           = array();
+		$chat_ids         = array();
+		$whatsapp_numbers = array();
+		$roles            = isset( $config['roles'] ) && is_array( $config['roles'] ) ? array_map( 'sanitize_key', $config['roles'] ) : array();
 
 		if ( ! empty( $roles ) ) {
 			$users = get_users(
@@ -320,6 +338,12 @@ final class Notification_Manager {
 					if ( '' !== $chat_id ) {
 						$chat_ids[] = $chat_id;
 					}
+
+					$whatsapp_number = WhatsApp_Number::for_user( $user->ID );
+
+					if ( '' !== $whatsapp_number ) {
+						$whatsapp_numbers[] = $whatsapp_number;
+					}
 				}
 			}
 		}
@@ -339,8 +363,33 @@ final class Notification_Manager {
 		}
 
 		return array(
-			'emails'            => array_values( array_unique( $emails ) ),
-			'telegram_chat_ids' => array_values( array_unique( $chat_ids ) ),
+			'emails'                    => array_values( array_unique( $emails ) ),
+			'telegram_chat_ids'         => array_values( array_unique( $chat_ids ) ),
+			'whatsapp_recipient_phones' => array_values( array_unique( $whatsapp_numbers ) ),
 		);
+	}
+
+	/**
+	 * Resolve the destination count recorded for a provider.
+	 *
+	 * @param string $provider_key Provider key.
+	 * @param array  $recipients   Email recipients.
+	 * @param array  $context      Notification context.
+	 * @return int
+	 */
+	private function provider_recipient_count( $provider_key, array $recipients, array $context ) {
+		if ( 'telegram' === $provider_key ) {
+			return ! empty( $context['telegram_chat_ids'] ) && is_array( $context['telegram_chat_ids'] )
+				? count( $context['telegram_chat_ids'] )
+				: 1;
+		}
+
+		if ( 'whatsapp' === $provider_key ) {
+			return ! empty( $context['whatsapp_recipient_phones'] ) && is_array( $context['whatsapp_recipient_phones'] )
+				? count( $context['whatsapp_recipient_phones'] )
+				: 1;
+		}
+
+		return count( $recipients );
 	}
 }

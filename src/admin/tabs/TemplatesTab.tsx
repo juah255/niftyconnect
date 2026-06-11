@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
+import { ChevronDown } from 'lucide-react';
 
 import type { Payload, TemplateMode, UpdateSettings } from '../types';
 import { eventCategoryLabel, orderedEventCategories } from '../utils';
@@ -35,6 +36,7 @@ export default function TemplatesTab( {
 	updateSettings,
 }: TemplatesTabProps ) {
 	const { settings } = payload;
+	const hasWhatsApp = !! payload.features.channels.whatsapp;
 	const templateKeys = Object.keys( settings.templates ).filter( ( key ) => {
 		const eventDef = payload.features.events[ key ];
 
@@ -71,6 +73,9 @@ export default function TemplatesTab( {
 	const [ openGroups, setOpenGroups ] = useState< Record< string, boolean > >(
 		{}
 	);
+	const [ openWhatsAppTemplates, setOpenWhatsAppTemplates ] = useState<
+		Record< string, boolean >
+	>( {} );
 
 	useEffect( () => {
 		if ( ! templateGroups.length ) {
@@ -99,6 +104,13 @@ export default function TemplatesTab( {
 		setOpenGroups( ( current ) => ( {
 			...current,
 			[ value ]: ! current[ value ],
+		} ) );
+	}
+
+	function toggleWhatsAppTemplate( eventKey: string ) {
+		setOpenWhatsAppTemplates( ( current ) => ( {
+			...current,
+			[ eventKey ]: ! current[ eventKey ],
 		} ) );
 	}
 
@@ -171,6 +183,14 @@ export default function TemplatesTab( {
 												key,
 												eventDef.category
 											);
+											const whatsappTemplate = settings
+												.whatsapp_templates[ key ] || {
+												name: '',
+												language: 'en_US',
+												parameters: 'subject_body',
+											};
+											const whatsappTemplateOpen =
+												!! openWhatsAppTemplates[ key ];
 
 											return (
 												<Card key={ key }>
@@ -275,6 +295,156 @@ export default function TemplatesTab( {
 																);
 															} }
 														/>
+														{ hasWhatsApp && (
+															<div>
+																<button
+																	type="button"
+																	className="flex items-center gap-2 border-0 bg-transparent p-0 text-left shadow-none"
+																	aria-expanded={
+																		whatsappTemplateOpen
+																	}
+																	onClick={ () =>
+																		toggleWhatsAppTemplate(
+																			key
+																		)
+																	}
+																>
+																	<span className="text-sm font-semibold text-slate-700">
+																		{ __(
+																			'WhatsApp approved template',
+																			'niftyconnect'
+																		) }
+																	</span>
+																	<ChevronDown
+																		className={ `h-4 w-4 text-slate-500 transition-transform ${
+																			whatsappTemplateOpen
+																				? 'rotate-180'
+																				: ''
+																		}` }
+																	/>
+																</button>
+																{ whatsappTemplateOpen && (
+																	<div className="mt-3 space-y-4">
+																		<p className="text-sm leading-6 text-slate-500">
+																			{ __(
+																				'When a name is set, it overrides the global WhatsApp message type and template. Leave it blank to use the global WhatsApp settings.',
+																				'niftyconnect'
+																			) }
+																		</p>
+																		<div className="grid gap-4 md:grid-cols-2">
+																			<Field
+																				id={ `nh-whatsapp-template-name-${ key }` }
+																				label={ __(
+																					'Template name',
+																					'niftyconnect'
+																				) }
+																				placeholder="new_order_notification"
+																				value={
+																					whatsappTemplate.name
+																				}
+																				help={ __(
+																					'Use the exact approved name from WhatsApp Manager.',
+																					'niftyconnect'
+																				) }
+																				onChange={ (
+																					value
+																				) => {
+																					updateSettings(
+																						(
+																							draft
+																						) => {
+																							draft.whatsapp_templates[
+																								key
+																							].name =
+																								value;
+																						}
+																					);
+																				} }
+																			/>
+																			<Field
+																				id={ `nh-whatsapp-template-language-${ key }` }
+																				label={ __(
+																					'Language code',
+																					'niftyconnect'
+																				) }
+																				placeholder="en_US"
+																				value={
+																					whatsappTemplate.language
+																				}
+																				onChange={ (
+																					value
+																				) => {
+																					updateSettings(
+																						(
+																							draft
+																						) => {
+																							draft.whatsapp_templates[
+																								key
+																							].language =
+																								value;
+																						}
+																					);
+																				} }
+																			/>
+																		</div>
+																		<Field
+																			id={ `nh-whatsapp-template-parameters-${ key }` }
+																			label={ __(
+																				'Template body variables',
+																				'niftyconnect'
+																			) }
+																			value={
+																				whatsappTemplate.parameters
+																			}
+																			options={ [
+																				{
+																					label: __(
+																						'Two variables: {{1}} subject, {{2}} body',
+																						'niftyconnect'
+																					),
+																					value: 'subject_body',
+																				},
+																				{
+																					label: __(
+																						'One variable: {{1}} full message',
+																						'niftyconnect'
+																					),
+																					value: 'message',
+																				},
+																				{
+																					label: __(
+																						'No variables',
+																						'niftyconnect'
+																					),
+																					value: 'none',
+																				},
+																			] }
+																			help={ __(
+																				'The selection must match the variables in the approved template body.',
+																				'niftyconnect'
+																			) }
+																			onChange={ (
+																				value
+																			) => {
+																				updateSettings(
+																					(
+																						draft
+																					) => {
+																						draft.whatsapp_templates[
+																							key
+																						].parameters =
+																							value as
+																								| 'none'
+																								| 'message'
+																								| 'subject_body';
+																					}
+																				);
+																			} }
+																		/>
+																	</div>
+																) }
+															</div>
+														) }
 													</CardContent>
 												</Card>
 											);

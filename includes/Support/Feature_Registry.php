@@ -44,6 +44,11 @@ final class Feature_Registry {
 				'label'       => __( 'Telegram', 'niftyconnect' ),
 				'description' => __( 'Send Telegram bot notifications with formatting and link preview controls.', 'niftyconnect' ),
 			),
+			'whatsapp' => array(
+				'key'         => 'whatsapp',
+				'label'       => __( 'WhatsApp', 'niftyconnect' ),
+				'description' => __( 'Send automated messages through the official WhatsApp Cloud API.', 'niftyconnect' ),
+			),
 		);
 
 		return apply_filters( 'niftyconnect_channel_definitions', $channels );

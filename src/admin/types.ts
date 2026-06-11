@@ -20,6 +20,12 @@ export interface Template {
 
 export type TemplateMode = 'custom' | 'default';
 
+export interface WhatsAppTemplate {
+	name: string;
+	language: string;
+	parameters: 'none' | 'message' | 'subject_body';
+}
+
 export interface ChannelSettings {
 	enabled: boolean;
 	config?: Record< string, string >;
@@ -63,6 +69,7 @@ export interface Settings {
 	trigger_recipients: Record< string, TriggerRecipientSettings >;
 	templates: Record< string, Template >;
 	template_modes: Record< string, TemplateMode >;
+	whatsapp_templates: Record< string, WhatsAppTemplate >;
 	rules?: Array< Record< string, unknown > >;
 }
 

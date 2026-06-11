@@ -1,6 +1,6 @@
-=== niftyConnect: Telegram and Email Notifications ===
+=== niftyConnect: WhatsApp, Telegram and Email Notifications ===
 Contributors: juah255
-Tags: notifications, email notifications, woocommerce, comments, users
+Tags: notifications, whatsapp, telegram, woocommerce, email notifications
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -8,21 +8,22 @@ Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Receive important WordPress and WooCommerce event notifications with customizable email and Telegram templates.
+Receive important WordPress and WooCommerce event notifications through WhatsApp, Telegram, and email.
 
 == Description ==
 
 niftyConnect helps site users receive timely notifications for important WordPress and WooCommerce events.
 
-niftyConnect includes email and Telegram notification channels, customizable templates, per-channel notification routing, trigger-specific role and custom recipients, manual test notifications, Telegram message controls, and an optional administrator-configured daily sending limit. Set the daily limit to `0` for unlimited sending.
+niftyConnect includes email, Telegram, and WhatsApp Cloud API notification channels, customizable templates, per-channel notification routing, trigger-specific role and custom recipients, manual test notifications, channel-specific message controls, and an optional administrator-configured daily sending limit. Set the daily limit to `0` for unlimited sending.
 
 = Features =
 
 * Email notification channel.
 * Telegram notification channel with bot, chat, formatting, and link preview settings.
+* WhatsApp Cloud API channel with approved-template and free-form text modes.
 * Per-channel notification routing for WordPress and WooCommerce events.
-* Trigger-specific role recipients and custom email recipients.
-* Custom templates for each event.
+* Trigger-specific role recipients, user-profile Telegram/WhatsApp destinations, and custom email recipients.
+* Custom notification content and per-event WhatsApp approved templates.
 * Manual test notification.
 * New post published notifications.
 * Post updated notifications.
@@ -48,7 +49,7 @@ niftyConnect includes email and Telegram notification channels, customizable tem
 == Screenshots ==
 
 1. Overview screen with notification activity and configuration status.
-2. Trigger routing screen for Telegram and email event notifications.
+2. Trigger routing screen for WhatsApp, Telegram, and email event notifications.
 3. Notification template screen for WordPress, WooCommerce, and system messages.
 4. Settings screen for global delivery controls and channel setup.
 
@@ -56,7 +57,15 @@ niftyConnect includes email and Telegram notification channels, customizable tem
 
 = Does niftyConnect send real notifications? =
 
-Yes. niftyConnect sends email notifications through WordPress' `wp_mail()` system and Telegram notifications through the Telegram Bot API.
+Yes. niftyConnect sends email notifications through WordPress' `wp_mail()` system, Telegram notifications through the Telegram Bot API, and WhatsApp notifications through Meta's official WhatsApp Cloud API.
+
+= Why does WhatsApp offer template and text modes? =
+
+Automated business-initiated WhatsApp messages generally require an approved message template. Free-form text is intended for an open customer-service conversation window. Configure a fallback approved template in the WhatsApp channel settings, or choose a different approved template name, language, and body-variable layout for each event in the Templates tab.
+
+= How are WhatsApp recipients selected? =
+
+Role-based delivery uses the WhatsApp phone stored on each matching WordPress user profile. If no matching profile has a valid international number, niftyConnect uses the default recipient configured in the WhatsApp channel settings.
 
 = Does WooCommerce need to be installed? =
 
@@ -74,6 +83,13 @@ Telegram service: https://telegram.org/
 Telegram Bot API: https://core.telegram.org/bots/api
 Telegram Terms of Service: https://telegram.org/tos
 Telegram Privacy Policy: https://telegram.org/privacy
+
+niftyConnect can send WhatsApp notifications only after an administrator configures a Meta access token, WhatsApp business phone number ID, recipient number, and message mode. When WhatsApp is enabled, the plugin sends the configured recipient phone number, notification subject and body, template details, and relevant event content to Meta's Graph API so WhatsApp can deliver the message. Depending on enabled triggers and templates, this may include site, post, comment, user, security, and WooCommerce order details. Access tokens can be stored in plugin settings or supplied through the `NIFTYCONNECT_WHATSAPP_ACCESS_TOKEN` constant in `wp-config.php`.
+
+WhatsApp service: https://www.whatsapp.com/
+WhatsApp Cloud API: https://developers.facebook.com/docs/whatsapp/cloud-api/
+Meta Terms: https://www.facebook.com/legal/terms
+Meta Privacy Policy: https://www.facebook.com/privacy/policy/
 
 == Changelog ==
 

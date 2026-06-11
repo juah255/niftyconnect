@@ -35,7 +35,7 @@ interface Provider_Interface {
 	 * Send a notification.
 	 *
 	 * @param Notification $notification Notification object.
-	 * @return true|\WP_Error
+	 * @return true|array|\WP_Error
 	 */
 	public function send( Notification $notification );
 }
