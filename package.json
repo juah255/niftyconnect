@@ -3,10 +3,16 @@
   "version": "1.0.2",
   "description": "React admin app build tooling for the niftyConnect plugin.",
   "private": true,
+  "packageManager": "npm@10.9.3",
+  "engines": {
+    "node": ">=20",
+    "npm": "10.9.3"
+  },
   "scripts": {
     "build": "wp-scripts build",
     "start": "wp-scripts start",
     "lint:js": "wp-scripts lint-js src",
+    "lockfile:check": "node scripts/check-lockfile.mjs",
     "typecheck": "tsc --noEmit",
     "format": "wp-scripts format src",
     "i18n": "wp i18n make-pot . languages/niftyconnect.pot --slug=niftyconnect --domain=niftyconnect --exclude=node_modules,build,dist,vendor,.git",

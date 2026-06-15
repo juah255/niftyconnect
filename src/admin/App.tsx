@@ -60,8 +60,7 @@ interface SupportLink {
 	className: string;
 }
 
-const DEFAULT_UPGRADE_URL =
-	'https://niftyconnect.ideacraft.dev/#pricing';
+const DEFAULT_UPGRADE_URL = 'https://niftyconnect.ideacraft.dev/#pricing';
 const DEFAULT_SUPPORT_URL =
 	'https://wordpress.org/support/plugin/niftyconnect/';
 
