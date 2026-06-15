@@ -4,7 +4,7 @@ Tags: notifications, whatsapp, telegram, woocommerce, email notifications
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,7 +44,8 @@ niftyConnect includes email, Telegram, and WhatsApp Cloud API notification chann
 2. Activate `niftyConnect` from the Plugins screen.
 3. Go to `niftyConnect` in the WordPress admin menu.
 4. Configure recipients, templates, channels, and event triggers.
-5. Send a manual test notification.
+5. To use WhatsApp, add the Meta access token, WhatsApp business phone number ID, recipient number, and approved template details in the WhatsApp channel settings.
+6. Save the settings and send a manual test notification.
 
 == Screenshots ==
 
@@ -62,6 +63,14 @@ Yes. niftyConnect sends email notifications through WordPress' `wp_mail()` syste
 = Why does WhatsApp offer template and text modes? =
 
 Automated business-initiated WhatsApp messages generally require an approved message template. Free-form text is intended for an open customer-service conversation window. Configure a fallback approved template in the WhatsApp channel settings, or choose a different approved template name, language, and body-variable layout for each event in the Templates tab.
+
+= Can I test WhatsApp without a production WhatsApp Business number? =
+
+Yes. Meta's WhatsApp Cloud API setup can provide a test business phone number, temporary access token, and phone number ID. Add and verify your personal WhatsApp number as an allowed test recipient, enter the test credentials in niftyConnect, and use Meta's pre-approved `hello_world` template with language `en_US` and no body variables.
+
+= What format should WhatsApp phone numbers use? =
+
+Enter the complete international number with its country code. Spaces, punctuation, and a leading `+` are removed when the number is saved. Do not enter a local number beginning with `0`.
 
 = How are WhatsApp recipients selected? =
 
@@ -92,6 +101,13 @@ Meta Terms: https://www.facebook.com/legal/terms
 Meta Privacy Policy: https://www.facebook.com/privacy/policy/
 
 == Changelog ==
+
+= 1.0.2 =
+
+* Added WhatsApp Cloud API notifications with approved-template and free-form text modes.
+* Added manual WhatsApp test notifications and international recipient validation.
+* Added role-based WhatsApp recipients, user-profile phone destinations, and a configurable default recipient.
+* Added event-specific WhatsApp template names, languages, and body-variable layouts.
 
 = 1.0.1 =
 

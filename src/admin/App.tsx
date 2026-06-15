@@ -61,7 +61,7 @@ interface SupportLink {
 }
 
 const DEFAULT_UPGRADE_URL =
-	'https://checkout.freemius.com/plugin/30851/plan/50633/';
+	'https://niftyconnect.ideacraft.dev/#pricing';
 const DEFAULT_SUPPORT_URL =
 	'https://wordpress.org/support/plugin/niftyconnect/';
 
