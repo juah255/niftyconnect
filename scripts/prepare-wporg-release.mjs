@@ -24,10 +24,19 @@ const runtimePaths = [
 	'build',
 	'includes',
 	'languages',
+	'scripts',
+	'src',
+	'.npmrc',
+	'.nvmrc',
 	'index.php',
 	`${ pluginSlug }.php`,
+	'package.json',
+	'package-lock.json',
+	'postcss.config.js',
 	'readme.txt',
+	'tsconfig.json',
 	'uninstall.php',
+	'webpack.config.js',
 ];
 
 const requiredFiles = [
@@ -38,6 +47,9 @@ const requiredFiles = [
 	path.join( pluginDir, 'build', 'admin-rtl.css' ),
 	path.join( pluginDir, 'build', 'admin.asset.php' ),
 	path.join( pluginDir, 'languages', `${ pluginSlug }.pot` ),
+	path.join( pluginDir, 'src', 'admin', 'index.tsx' ),
+	path.join( pluginDir, 'package-lock.json' ),
+	path.join( pluginDir, 'webpack.config.js' ),
 ];
 
 const readText = ( file ) => readFileSync( file, 'utf8' );

@@ -4,15 +4,8 @@
 /.wporg-release
 /dist
 /node_modules
-/scripts
-/src
 
 .distignore
 .gitignore
-package.json
-package-lock.json
-postcss.config.js
-tsconfig.json
-webpack.config.js
 npm-debug.log*
 yarn-error.log*

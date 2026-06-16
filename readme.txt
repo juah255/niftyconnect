@@ -1,14 +1,14 @@
-=== niftyConnect: WhatsApp, Telegram and Email Notifications ===
+=== niftyConnect Event Notifications ===
 Contributors: juah255
-Tags: notifications, whatsapp, telegram, woocommerce, email notifications
+Tags: notifications, alerts, woocommerce, email notifications, event notifications
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Receive important WordPress and WooCommerce event notifications through WhatsApp, Telegram, and email.
+Receive important WordPress and WooCommerce event notifications through configurable delivery channels.
 
 == Description ==
 
@@ -50,7 +50,7 @@ niftyConnect includes email, Telegram, and WhatsApp Cloud API notification chann
 == Screenshots ==
 
 1. Overview screen with notification activity and configuration status.
-2. Trigger routing screen for WhatsApp, Telegram, and email event notifications.
+2. Trigger routing screen for configured event notification channels.
 3. Notification template screen for WordPress, WooCommerce, and system messages.
 4. Settings screen for global delivery controls and channel setup.
 
@@ -86,6 +86,8 @@ Yes. Use the `niftyconnect_register_providers` action and implement the `Provide
 
 == Third-party services ==
 
+niftyConnect is an independent plugin and is not affiliated with, endorsed by, or sponsored by Meta, WhatsApp, Telegram, Automattic, or WooCommerce.
+
 niftyConnect can send Telegram notifications only after an administrator enters a Telegram bot token and chat ID. When Telegram is enabled, the plugin sends the notification subject, notification body, and configured chat ID to the Telegram Bot API so Telegram can deliver the message. Depending on the enabled triggers and templates, the notification message may include site, post, comment, user, and WooCommerce order details selected in your notification template.
 
 Telegram service: https://telegram.org/
@@ -100,7 +102,31 @@ WhatsApp Cloud API: https://developers.facebook.com/docs/whatsapp/cloud-api/
 Meta Terms: https://www.facebook.com/legal/terms
 Meta Privacy Policy: https://www.facebook.com/privacy/policy/
 
+== Source code and build tools ==
+
+The distributed `build/admin.js`, `build/admin.css`, and `build/admin-rtl.css` files are generated from the human-readable source in `src/admin/`.
+
+The public source repository is available at:
+
+https://github.com/juah255/niftyconnect
+
+The WordPress.org release package includes the source files, npm package manifest, lock file, and build configuration needed to rebuild these generated assets.
+
+To rebuild the admin assets:
+
+1. Use Node.js 20 with npm 10.9.3.
+2. Run `npm ci`.
+3. Run `npm run build`.
+
+Build configuration is included in `package.json`, `package-lock.json`, `webpack.config.js`, `postcss.config.js`, and `tsconfig.json`.
+
 == Changelog ==
+
+= 1.0.3 =
+
+* Renamed the public plugin display name to avoid third-party service names in the title.
+* Included human-readable admin source and build tooling in release packages.
+* Documented generated asset source files and rebuild instructions.
 
 = 1.0.2 =
 
