@@ -106,6 +106,11 @@ final class Settings_Controller {
 						'required'          => false,
 						'sanitize_callback' => array( WhatsApp_Number::class, 'sanitize' ),
 					),
+					'discord_thread_id' => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
 				),
 			)
 		);
@@ -179,7 +184,10 @@ final class Settings_Controller {
 		$whatsapp_phone   = $request->has_param( 'whatsapp_phone' )
 			? WhatsApp_Number::sanitize( $request->get_param( 'whatsapp_phone' ) )
 			: null;
-		$result           = $this->notifications->send_test( $recipient, $channel, $telegram_chat_id, $whatsapp_phone );
+		$discord_thread_id = $request->has_param( 'discord_thread_id' )
+			? preg_replace( '/\D+/', '', sanitize_text_field( $request->get_param( 'discord_thread_id' ) ) )
+			: null;
+		$result           = $this->notifications->send_test( $recipient, $channel, $telegram_chat_id, $whatsapp_phone, $discord_thread_id );
 
 		if ( is_wp_error( $result ) ) {
 			$data = $result->get_error_data();

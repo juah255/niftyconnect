@@ -21,7 +21,8 @@ export function sendTestNotification(
 	recipient: string,
 	channel = '',
 	telegramChatId = '',
-	whatsappPhone = ''
+	whatsappPhone = '',
+	discordThreadId = ''
 ): Promise< {
 	message: string;
 	result: { limit: Payload[ 'stats' ][ 'limit' ] };
@@ -34,6 +35,7 @@ export function sendTestNotification(
 			channel,
 			telegram_chat_id: telegramChatId,
 			whatsapp_phone: whatsappPhone,
+			discord_thread_id: discordThreadId,
 		},
 	} );
 }

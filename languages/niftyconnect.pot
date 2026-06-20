@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-16T05:10:38+00:00\n"
+"POT-Creation-Date: 2026-06-17T15:16:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: niftyconnect\n"
@@ -55,40 +55,65 @@ msgstr ""
 msgid "Enter the international phone number with country code. This is used for role-based WhatsApp delivery."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:120
+#: includes/Notifications/Notification_Manager.php:123
 msgid "Choose a valid notification channel."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:128
+#: includes/Notifications/Notification_Manager.php:131
 msgid "Enter a valid test recipient email address."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:173
+#: includes/Notifications/Notification_Manager.php:179
 msgid "Notifications are disabled."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:180
+#: includes/Notifications/Notification_Manager.php:186
 msgid "This notification trigger is disabled."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:187
+#: includes/Notifications/Notification_Manager.php:193
 msgid "The daily notification sending limit has been reached."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:196
+#: includes/Notifications/Notification_Manager.php:202
 msgid "A notification filter prevented this notification from sending."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:218
+#: includes/Notifications/Notification_Manager.php:224
 msgid "No valid notification recipients are configured."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:247
+#: includes/Notifications/Notification_Manager.php:253
 msgid "Sent successfully."
 msgstr ""
 
-#: includes/Notifications/Notification_Manager.php:289
+#: includes/Notifications/Notification_Manager.php:295
 msgid "No enabled notification channels sent this message."
+msgstr ""
+
+#: includes/Notifications/Providers/Discord_Provider.php:36
+#: includes/Support/Feature_Registry.php:44
+msgid "Discord"
+msgstr ""
+
+#: includes/Notifications/Providers/Discord_Provider.php:58
+msgid "Discord is missing a valid webhook URL."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: includes/Notifications/Providers/Discord_Provider.php:111
+#, php-format
+msgid "Discord returned HTTP %d."
+msgstr ""
+
+#. translators: 1: HTTP status code, 2: Discord API error message.
+#: includes/Notifications/Providers/Discord_Provider.php:118
+#, php-format
+msgid "Discord returned HTTP %1$d: %2$s"
+msgstr ""
+
+#: includes/Notifications/Providers/Discord_Provider.php:135
+msgid "Sent to Discord."
 msgstr ""
 
 #: includes/Notifications/Providers/Email_Provider.php:36
@@ -101,7 +126,7 @@ msgid "WordPress could not send the email notification."
 msgstr ""
 
 #: includes/Notifications/Providers/Telegram_Provider.php:37
-#: includes/Support/Feature_Registry.php:44
+#: includes/Support/Feature_Registry.php:49
 msgid "Telegram"
 msgstr ""
 
@@ -130,7 +155,7 @@ msgid "Telegram cannot send messages to the bot itself. Use the recipient chat I
 msgstr ""
 
 #: includes/Notifications/Providers/WhatsApp_Provider.php:37
-#: includes/Support/Feature_Registry.php:49
+#: includes/Support/Feature_Registry.php:54
 msgid "WhatsApp"
 msgstr ""
 
@@ -178,15 +203,15 @@ msgstr ""
 msgid "WhatsApp returned a failed message status."
 msgstr ""
 
-#: includes/REST/Settings_Controller.php:124
+#: includes/REST/Settings_Controller.php:129
 msgid "You do not have permission to manage niftyConnect."
 msgstr ""
 
-#: includes/REST/Settings_Controller.php:135
+#: includes/REST/Settings_Controller.php:140
 msgid "The request nonce is invalid. Refresh the page and try again."
 msgstr ""
 
-#: includes/REST/Settings_Controller.php:195
+#: includes/REST/Settings_Controller.php:203
 msgid "Test notification sent."
 msgstr ""
 
@@ -195,122 +220,126 @@ msgid "Send event notifications to one or more email recipients."
 msgstr ""
 
 #: includes/Support/Feature_Registry.php:45
-msgid "Send Telegram bot notifications with formatting and link preview controls."
+msgid "Send notifications into a Discord channel through an incoming webhook."
 msgstr ""
 
 #: includes/Support/Feature_Registry.php:50
+msgid "Send Telegram bot notifications with formatting and link preview controls."
+msgstr ""
+
+#: includes/Support/Feature_Registry.php:55
 msgid "Send automated messages through the official WhatsApp Cloud API."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:66
+#: includes/Support/Feature_Registry.php:71
 msgid "New post published"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:68
+#: includes/Support/Feature_Registry.php:73
 msgid "Triggered when a standard post is published for the first time."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:72
+#: includes/Support/Feature_Registry.php:77
 msgid "Post updated"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:74
+#: includes/Support/Feature_Registry.php:79
 msgid "Triggered when an already-published post is updated."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:78
+#: includes/Support/Feature_Registry.php:83
 msgid "New comment"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:80
+#: includes/Support/Feature_Registry.php:85
 msgid "Triggered when a new comment is approved."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:84
+#: includes/Support/Feature_Registry.php:89
 msgid "Comment pending moderation"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:86
+#: includes/Support/Feature_Registry.php:91
 msgid "Triggered when a new comment is waiting for moderation."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:90
+#: includes/Support/Feature_Registry.php:95
 msgid "New user registration"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:92
+#: includes/Support/Feature_Registry.php:97
 msgid "Triggered when a new WordPress user account is created."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:96
+#: includes/Support/Feature_Registry.php:101
 msgid "Admin login"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:98
+#: includes/Support/Feature_Registry.php:103
 msgid "Triggered when a user with administrator access logs in."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:102
+#: includes/Support/Feature_Registry.php:107
 msgid "New WooCommerce order"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:104
+#: includes/Support/Feature_Registry.php:109
 msgid "Triggered when WooCommerce creates a new order."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:108
+#: includes/Support/Feature_Registry.php:113
 msgid "Order completed"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:110
+#: includes/Support/Feature_Registry.php:115
 msgid "Triggered when an order status changes to completed."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:114
+#: includes/Support/Feature_Registry.php:119
 msgid "All order status changes"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:116
+#: includes/Support/Feature_Registry.php:121
 msgid "Notify on every WooCommerce order status transition."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:121
+#: includes/Support/Feature_Registry.php:126
 msgid "New customer registration"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:123
+#: includes/Support/Feature_Registry.php:128
 msgid "Notify when a new WooCommerce customer account is created."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:128
+#: includes/Support/Feature_Registry.php:133
 msgid "Low stock alerts"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:130
+#: includes/Support/Feature_Registry.php:135
 msgid "Notify when product inventory drops below the low-stock threshold."
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:135
+#: includes/Support/Feature_Registry.php:140
 msgid "Back in stock alerts"
 msgstr ""
 
-#: includes/Support/Feature_Registry.php:137
+#: includes/Support/Feature_Registry.php:142
 msgid "Notify when products return to stock."
 msgstr ""
 
-#: includes/Support/Settings.php:138
+#: includes/Support/Settings.php:149
 msgid "Test notification from {{site_name}}"
 msgstr ""
 
-#: includes/Support/Settings.php:139
+#: includes/Support/Settings.php:150
 msgid "This is a test notification from {{site_name}}. If you received this message, niftyConnect is working."
 msgstr ""
 
-#: includes/Support/Settings.php:142
+#: includes/Support/Settings.php:153
 msgid "New post published: {{post_title}}"
 msgstr ""
 
-#: includes/Support/Settings.php:143
+#: includes/Support/Settings.php:154
 msgid ""
 "A new post has been published on {{site_name}}.\n"
 "\n"
@@ -319,11 +348,11 @@ msgid ""
 "URL: {{post_url}}"
 msgstr ""
 
-#: includes/Support/Settings.php:146
+#: includes/Support/Settings.php:157
 msgid "Post updated: {{post_title}}"
 msgstr ""
 
-#: includes/Support/Settings.php:147
+#: includes/Support/Settings.php:158
 msgid ""
 "A published post was updated on {{site_name}}.\n"
 "\n"
@@ -332,11 +361,11 @@ msgid ""
 "URL: {{post_url}}"
 msgstr ""
 
-#: includes/Support/Settings.php:150
+#: includes/Support/Settings.php:161
 msgid "New comment on {{post_title}}"
 msgstr ""
 
-#: includes/Support/Settings.php:151
+#: includes/Support/Settings.php:162
 msgid ""
 "A new comment was posted on {{site_name}}.\n"
 "\n"
@@ -346,11 +375,11 @@ msgid ""
 "URL: {{comment_url}}"
 msgstr ""
 
-#: includes/Support/Settings.php:154
+#: includes/Support/Settings.php:165
 msgid "Comment pending moderation on {{post_title}}"
 msgstr ""
 
-#: includes/Support/Settings.php:155
+#: includes/Support/Settings.php:166
 msgid ""
 "A comment is waiting for moderation on {{site_name}}.\n"
 "\n"
@@ -360,11 +389,11 @@ msgid ""
 "Moderate: {{moderation_url}}"
 msgstr ""
 
-#: includes/Support/Settings.php:158
+#: includes/Support/Settings.php:169
 msgid "New user registered: {{user_login}}"
 msgstr ""
 
-#: includes/Support/Settings.php:159
+#: includes/Support/Settings.php:170
 msgid ""
 "A new user registered on {{site_name}}.\n"
 "\n"
@@ -373,11 +402,11 @@ msgid ""
 "Role: {{user_role}}"
 msgstr ""
 
-#: includes/Support/Settings.php:162
+#: includes/Support/Settings.php:173
 msgid "Admin login on {{site_name}}: {{user_login}}"
 msgstr ""
 
-#: includes/Support/Settings.php:163
+#: includes/Support/Settings.php:174
 msgid ""
 "An administrator logged in on {{site_name}}.\n"
 "\n"
@@ -391,11 +420,11 @@ msgid ""
 "Profile: {{user_url}}"
 msgstr ""
 
-#: includes/Support/Settings.php:166
+#: includes/Support/Settings.php:177
 msgid "New WooCommerce order #{{order_number}}"
 msgstr ""
 
-#: includes/Support/Settings.php:167
+#: includes/Support/Settings.php:178
 msgid ""
 "A new order was placed on {{site_name}}.\n"
 "\n"
@@ -406,11 +435,11 @@ msgid ""
 "View: {{order_url}}"
 msgstr ""
 
-#: includes/Support/Settings.php:170
+#: includes/Support/Settings.php:181
 msgid "WooCommerce order completed #{{order_number}}"
 msgstr ""
 
-#: includes/Support/Settings.php:171
+#: includes/Support/Settings.php:182
 msgid ""
 "An order was marked completed on {{site_name}}.\n"
 "\n"
@@ -420,19 +449,19 @@ msgid ""
 "View: {{order_url}}"
 msgstr ""
 
-#: includes/Support/Settings.php:174
+#: includes/Support/Settings.php:185
 msgid "Order #{{order_number}} changed to {{new_status}}"
 msgstr ""
 
-#: includes/Support/Settings.php:175
+#: includes/Support/Settings.php:186
 msgid "Order #{{order_number}} changed from {{old_status}} to {{new_status}}."
 msgstr ""
 
-#: includes/Support/Settings.php:178
+#: includes/Support/Settings.php:189
 msgid "New WooCommerce customer: {{customer_name}}"
 msgstr ""
 
-#: includes/Support/Settings.php:179
+#: includes/Support/Settings.php:190
 msgid ""
 "A new WooCommerce customer registered on {{site_name}}.\n"
 "\n"
@@ -440,18 +469,18 @@ msgid ""
 "Email: {{customer_email}}"
 msgstr ""
 
-#: includes/Support/Settings.php:182
+#: includes/Support/Settings.php:193
 msgid "Low stock: {{product_name}}"
 msgstr ""
 
-#: includes/Support/Settings.php:183
+#: includes/Support/Settings.php:194
 msgid "{{product_name}} is low on stock. Current stock: {{stock_quantity}}."
 msgstr ""
 
-#: includes/Support/Settings.php:186
+#: includes/Support/Settings.php:197
 msgid "Back in stock: {{product_name}}"
 msgstr ""
 
-#: includes/Support/Settings.php:187
+#: includes/Support/Settings.php:198
 msgid "{{product_name}} is back in stock. Current stock: {{stock_quantity}}."
 msgstr ""

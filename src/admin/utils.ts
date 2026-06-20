@@ -18,7 +18,8 @@ export function orderedChannels(
 	const priority: Record< string, number > = {
 		telegram: 0,
 		whatsapp: 1,
-		email: 2,
+		discord: 2,
+		email: 3,
 	};
 
 	return objectValues( value ).sort( ( left, right ) => {

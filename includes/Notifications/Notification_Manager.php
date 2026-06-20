@@ -8,6 +8,7 @@
 namespace NiftyConnect\Notifications;
 
 use NiftyConnect\Notifications\Providers\Email_Provider;
+use NiftyConnect\Notifications\Providers\Discord_Provider;
 use NiftyConnect\Notifications\Providers\Provider_Interface;
 use NiftyConnect\Notifications\Providers\Telegram_Provider;
 use NiftyConnect\Notifications\Providers\WhatsApp_Provider;
@@ -52,6 +53,7 @@ final class Notification_Manager {
 		$this->limiter   = new Daily_Limiter();
 
 		$this->register_provider( new Email_Provider() );
+		$this->register_provider( new Discord_Provider() );
 		$this->register_provider( new Telegram_Provider() );
 		$this->register_provider( new WhatsApp_Provider() );
 
@@ -109,9 +111,10 @@ final class Notification_Manager {
 	 * @param string      $channel          Optional channel key.
 	 * @param string|null $telegram_chat_id Optional Telegram chat ID override.
 	 * @param string|null $whatsapp_phone   Optional WhatsApp recipient override.
+	 * @param string|null $discord_thread_id Optional Discord thread ID override.
 	 * @return array|\WP_Error
 	 */
-	public function send_test( $recipient, $channel = '', $telegram_chat_id = null, $whatsapp_phone = null ) {
+	public function send_test( $recipient, $channel = '', $telegram_chat_id = null, $whatsapp_phone = null, $discord_thread_id = null ) {
 		$channel = sanitize_key( $channel );
 
 		if ( $channel && ! isset( $this->providers[ $channel ] ) ) {
@@ -145,6 +148,9 @@ final class Notification_Manager {
 				'whatsapp_config_recipient' => null === $whatsapp_phone
 					? null
 					: WhatsApp_Number::sanitize( $whatsapp_phone ),
+				'discord_config_thread_id'  => null === $discord_thread_id
+					? null
+					: preg_replace( '/\D+/', '', sanitize_text_field( $discord_thread_id ) ),
 			),
 			array(
 				'recipients'             => array( sanitize_email( $recipient ) ),
@@ -388,6 +394,10 @@ final class Notification_Manager {
 			return ! empty( $context['whatsapp_recipient_phones'] ) && is_array( $context['whatsapp_recipient_phones'] )
 				? count( $context['whatsapp_recipient_phones'] )
 				: 1;
+		}
+
+		if ( 'discord' === $provider_key ) {
+			return 1;
 		}
 
 		return count( $recipients );

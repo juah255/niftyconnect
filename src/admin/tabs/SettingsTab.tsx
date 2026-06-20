@@ -261,6 +261,15 @@ function ChannelSetupFields( {
 		);
 	}
 
+	if ( channelKey === 'discord' ) {
+		return (
+			<DiscordSetupFields
+				settings={ settings }
+				updateSettings={ updateSettings }
+			/>
+		);
+	}
+
 	if ( channelKey === 'whatsapp' ) {
 		return (
 			<WhatsAppSetupFields
@@ -293,6 +302,112 @@ function ChannelSetupFields( {
 					} }
 				/>
 			) ) }
+		</div>
+	);
+}
+
+function DiscordSetupFields( {
+	settings,
+	updateSettings,
+}: {
+	settings: ChannelSettings;
+	updateSettings: UpdateSettings;
+} ) {
+	const configValue = settings.config || {};
+
+	function updateConfig( key: string, value: string ) {
+		updateSettings( ( draft ) => {
+			if ( ! draft.channels.discord.config ) {
+				draft.channels.discord.config = {};
+			}
+
+			draft.channels.discord.config[ key ] = value;
+		} );
+	}
+
+	return (
+		<div className="space-y-4">
+			<h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+				{ __( 'Setup', 'niftyconnect' ) }
+			</h4>
+			<Field
+				id="nh-discord-webhook-url"
+				label={ __( 'Webhook URL', 'niftyconnect' ) }
+				type="password"
+				value={ configValue.webhook_url || '' }
+				help={ __(
+					'Paste an incoming Discord webhook URL. You may instead define NIFTYCONNECT_DISCORD_WEBHOOK_URL in wp-config.php.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) => updateConfig( 'webhook_url', value ) }
+			/>
+			<Field
+				id="nh-discord-username"
+				label={ __( 'Webhook username', 'niftyconnect' ) }
+				value={ configValue.username || '' }
+				help={ __(
+					'Optional display name override for messages sent by this webhook.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) => updateConfig( 'username', value ) }
+			/>
+			<Field
+				id="nh-discord-avatar-url"
+				label={ __( 'Avatar URL', 'niftyconnect' ) }
+				type="url"
+				value={ configValue.avatar_url || '' }
+				help={ __(
+					'Optional image URL used as the webhook avatar.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) => updateConfig( 'avatar_url', value ) }
+			/>
+			<Field
+				id="nh-discord-thread-id"
+				label={ __( 'Thread ID', 'niftyconnect' ) }
+				value={ configValue.thread_id || '' }
+				help={ __(
+					'Optional. Required when the webhook posts into a Discord forum or media channel thread.',
+					'niftyconnect'
+				) }
+				onChange={ ( value ) => updateConfig( 'thread_id', value ) }
+			/>
+			<div className="space-y-4 rounded-xl border border-slate-200 p-4">
+				<h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+					{ __( 'Message options', 'niftyconnect' ) }
+				</h4>
+				<Field
+					id="nh-discord-suppress-embeds"
+					label={ __( 'Suppress link embeds', 'niftyconnect' ) }
+					value={ configValue.suppress_embeds || '' }
+					options={ [
+						{
+							label: __( 'No', 'niftyconnect' ),
+							value: '',
+						},
+						{
+							label: __( 'Yes', 'niftyconnect' ),
+							value: '1',
+						},
+					] }
+					onChange={ ( value ) =>
+						updateConfig( 'suppress_embeds', value )
+					}
+				/>
+				<p className="text-sm leading-6 text-slate-500">
+					<a
+						className="font-medium text-emerald-700 underline underline-offset-2 hover:text-emerald-800"
+						href="https://docs.discord.com/developers/resources/webhook#execute-webhook"
+						rel="noreferrer noopener"
+						target="_blank"
+					>
+						{ __(
+							'Open Discord webhook documentation',
+							'niftyconnect'
+						) }
+					</a>
+				</p>
+			</div>
 		</div>
 	);
 }
@@ -655,10 +770,12 @@ function ChannelTest( {
 	);
 	const [ telegramTestChatId, setTelegramTestChatId ] = useState( '' );
 	const [ whatsappTestPhone, setWhatsAppTestPhone ] = useState( '' );
+	const [ discordTestThreadId, setDiscordTestThreadId ] = useState( '' );
 	const [ sending, setSending ] = useState( false );
 	const isEmail = channelKey === 'email';
 	const isTelegram = channelKey === 'telegram';
 	const isWhatsApp = channelKey === 'whatsapp';
+	const isDiscord = channelKey === 'discord';
 
 	function sendTest() {
 		setSending( true );
@@ -668,7 +785,8 @@ function ChannelTest( {
 			isEmail ? recipient : '',
 			channelKey,
 			isTelegram ? telegramTestChatId : '',
-			isWhatsApp ? whatsappTestPhone : ''
+			isWhatsApp ? whatsappTestPhone : '',
+			isDiscord ? discordTestThreadId : ''
 		)
 			.then( ( response ) => {
 				setPayload( ( current ) => {
@@ -733,6 +851,18 @@ function ChannelTest( {
 						'niftyconnect'
 					) }
 					onChange={ setWhatsAppTestPhone }
+				/>
+			) }
+			{ isDiscord && (
+				<Field
+					id="nh-discord-test-thread-id"
+					label={ __( 'Test thread ID', 'niftyconnect' ) }
+					value={ discordTestThreadId }
+					help={ __(
+						'Optional. This test-only thread ID overrides the saved Discord thread ID.',
+						'niftyconnect'
+					) }
+					onChange={ setDiscordTestThreadId }
 				/>
 			) }
 			<Button disabled={ sending } onClick={ sendTest }>

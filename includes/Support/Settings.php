@@ -79,6 +79,17 @@ final class Settings {
 					'enabled' => true,
 					'events'  => self::default_channel_events(),
 				),
+				'discord'  => array(
+					'enabled' => false,
+					'config'  => array(
+						'webhook_url'     => '',
+						'username'        => '',
+						'avatar_url'      => '',
+						'thread_id'       => '',
+						'suppress_embeds' => '',
+					),
+					'events'  => self::default_channel_events(),
+				),
 				'telegram' => array(
 					'enabled' => false,
 					'config'  => array(
@@ -658,6 +669,23 @@ final class Settings {
 		$sanitized = array();
 
 		switch ( $key ) {
+			case 'discord':
+				$webhook_url = isset( $config['webhook_url'] ) ? esc_url_raw( $config['webhook_url'] ) : '';
+				$parts       = $webhook_url ? wp_parse_url( $webhook_url ) : array();
+				$host        = isset( $parts['host'] ) ? strtolower( $parts['host'] ) : '';
+				$path        = isset( $parts['path'] ) ? $parts['path'] : '';
+				$is_discord_webhook = isset( $parts['scheme'] )
+					&& 'https' === strtolower( $parts['scheme'] )
+					&& in_array( $host, array( 'discord.com', 'discordapp.com', 'canary.discord.com', 'ptb.discord.com' ), true )
+					&& 1 === preg_match( '#^/api/webhooks/\d+/[^/]+/?$#', $path );
+
+				$sanitized['webhook_url']     = $is_discord_webhook ? $webhook_url : '';
+				$sanitized['username']        = isset( $config['username'] ) ? substr( sanitize_text_field( $config['username'] ), 0, 80 ) : '';
+				$sanitized['avatar_url']      = isset( $config['avatar_url'] ) && wp_http_validate_url( $config['avatar_url'] ) ? esc_url_raw( $config['avatar_url'] ) : '';
+				$sanitized['thread_id']       = isset( $config['thread_id'] ) ? preg_replace( '/\D+/', '', sanitize_text_field( $config['thread_id'] ) ) : '';
+				$sanitized['suppress_embeds'] = ! empty( $config['suppress_embeds'] ) ? '1' : '';
+				break;
+
 			case 'telegram':
 				$sanitized['bot_token'] = isset( $config['bot_token'] ) ? sanitize_text_field( $config['bot_token'] ) : '';
 				$chat_id                = isset( $config['chat_id'] ) ? $config['chat_id'] : '';

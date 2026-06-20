@@ -39,6 +39,11 @@ final class Feature_Registry {
 				'label'       => __( 'Email', 'niftyconnect' ),
 				'description' => __( 'Send event notifications to one or more email recipients.', 'niftyconnect' ),
 			),
+			'discord'  => array(
+				'key'         => 'discord',
+				'label'       => __( 'Discord', 'niftyconnect' ),
+				'description' => __( 'Send notifications into a Discord channel through an incoming webhook.', 'niftyconnect' ),
+			),
 			'telegram' => array(
 				'key'         => 'telegram',
 				'label'       => __( 'Telegram', 'niftyconnect' ),

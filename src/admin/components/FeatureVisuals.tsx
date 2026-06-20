@@ -4,6 +4,7 @@ import {
 	CalendarDays,
 	CheckCircle2,
 	Clock3,
+	Cloud,
 	FileText,
 	FolderOpen,
 	Mail,
@@ -39,6 +40,7 @@ export function IconBubble( {
 export function getChannelIcon( key: string ): LucideIcon {
 	const icons: Record< string, LucideIcon > = {
 		email: Mail,
+		discord: Cloud,
 		telegram: Send,
 		whatsapp: MessageCircle,
 	};
